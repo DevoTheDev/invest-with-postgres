@@ -6,6 +6,8 @@
         *   Navigate to the /next-investment/backend and in /next-investment/frontend
             directories and run:
 
+                ~ npm i
+                
                 ~ npm run dev
 
         *   Then go to localhost:3000 in the browser.
