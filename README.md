@@ -3,10 +3,10 @@
 
     To get started:
 
-        *   Navigate to the /next-investment/backend and in /next-investment/frontend
+        *   Navigate to the root directory
             directories and run:
 
-                ~ npm i
+                ~ npm install
                 
                 ~ npm run dev
 

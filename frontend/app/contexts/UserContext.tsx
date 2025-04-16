@@ -1,7 +1,7 @@
 "use client";
 import React, { createContext, useState, useEffect, useContext } from "react";
 import axios from "axios";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { API_BASE_URL } from "./AuthContext";
 import { useAuth } from "../hooks/useAuth";
 
@@ -34,7 +34,6 @@ export type UserProfile = {
   transactions?: Object[]
 };
 
-// Define context type
 type UserContextType = {
   profile: UserProfile | null;
   loading: boolean;
@@ -66,8 +65,10 @@ export const UserContext = createContext<UserContextType>({
 export const UserProvider = ({ children }: { children: React.ReactNode }) => {
   const { token } = useAuth();
   const router = useRouter();
+  const x = usePathname();
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
+
 
   const fetchProfile = async () => {
     if (!token) return;
@@ -126,6 +127,7 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
   }
 
   useEffect(() => {
+    console.log(x)
     if (token) {
       fetchProfile();
     } else {

@@ -1,0 +1,26 @@
+{
+  "name": "next-investment",
+  "version": "1.0.0",
+  "description": "To get started:",
+  "main": "index.js",
+  "scripts": {
+    "dev": "concurrently \"npm --prefix frontend run dev\" \"npm --prefix backend run dev\"",
+    "build": "npm --prefix frontend run build && npm --prefix backend run build",
+    "start": "concurrently \"npm --prefix frontend run start\" \"npm --prefix backend run start\"",
+    "install": "npm --prefix frontend install && npm --prefix backend install"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DevoTheDev/invest-with-postgres.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/DevoTheDev/invest-with-postgres/issues"
+  },
+  "homepage": "https://github.com/DevoTheDev/invest-with-postgres#readme",
+  "devDependencies": {
+    "concurrently": "^9.1.2"
+  }
+}
