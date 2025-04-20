@@ -2,21 +2,28 @@
 import React from 'react';
 import { useRouter } from 'next/navigation';
 import { useUser } from '../../hooks/useUser';
+import { useAuth } from '@/app/hooks/useAuth';
 
 type Props = {}
 
 const AppBuffer = (props: Props) => {
     const router = useRouter();
 
-    const { profile } = useUser();
+    const { profile, loading: userLoading } = useUser();
+    const { authLoading } = useAuth();
 
     React.useEffect(() => {
-        if(profile) {
-            router.push("/portfolio");
-        } else {
-            router.push("/pages/sign-in")
-        }
-    }, []);
+      if (authLoading || userLoading) return;
+    
+    console.log("Profile:", profile);
+
+      if (profile) {
+        router.push("/portfolio");
+      } else {
+        router.push("/pages/sign-in");
+      }
+    }, [profile, authLoading, userLoading]);
+    
 
   return (
     <div className='m-4' >Loading App...</div>

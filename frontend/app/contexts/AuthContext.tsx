@@ -8,6 +8,8 @@ interface AuthContextType {
     login: (email: string, password: string) => Promise<void>;
     register: (email: string, password: string) => Promise<void>;
     logout: () => void;
+    validToken: () => Promise<boolean>;
+    authLoading: boolean;
 }
 
 export const AuthContext = createContext<AuthContextType>({} as AuthContextType);
@@ -16,21 +18,42 @@ export const API_BASE_URL = process.env.API_BASE_URL || "http://localhost:4004/a
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const [token, setToken] = useState<string | null>(null);
+    const [authLoading, setAuthLoading] = useState(true);
 
     useEffect(() => {
-        if (typeof window !== "undefined") {
-            const savedToken = localStorage.getItem("token");
-            if (savedToken) {
-                try {
-                    const payload = JSON.parse(atob(savedToken.split(".")[1]));
-                    setToken(savedToken);
-                    axios.defaults.headers.common["Authorization"] = `Bearer ${savedToken}`;
-                } catch (err) {
-                    console.error("Invalid token");
-                }
-            }
-        }
+        validateTokenOnInit();
     }, []);
+
+    const validateTokenOnInit = async () => {
+        if (typeof window === "undefined") return;
+
+        const savedToken = localStorage.getItem("token");
+        if (!savedToken) {
+            setAuthLoading(false);
+            return;
+        }
+
+        axios.defaults.headers.common["Authorization"] = `Bearer ${savedToken}`;
+
+        const isValid = await validToken();
+        if (isValid) {
+            setToken(savedToken);
+        } else {
+            logout();
+        }
+
+        setAuthLoading(false);
+    };
+
+    const validToken = async (): Promise<boolean> => {
+        try {
+            const response = await axios.get(`${API_BASE_URL}/users/me`);
+            return response.status === 200;
+        } catch (error) {
+            console.warn("Token validation failed:", error);
+            return false;
+        }
+    };
 
     const login = async (email: string, password: string) => {
         try {
@@ -42,7 +65,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             }
 
             setToken(token);
-            const payload = JSON.parse(atob(token.split(".")[1]));
             axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
         } catch (err: any) {
             throw new Error(err.response?.data?.message || "Login failed");
@@ -58,7 +80,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     };
 
     const logout = () => {
-        console.log("Logout clicked.")
         if (typeof window !== "undefined") {
             localStorage.removeItem("token");
         }
@@ -66,9 +87,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         setToken(null);
     };
 
-
     return (
-        <AuthContext.Provider value={{ token, login, register, logout }}>
+        <AuthContext.Provider value={{ token, login, register, logout, validToken, authLoading }}>
             {children}
         </AuthContext.Provider>
     );

@@ -83,8 +83,8 @@ export async function fetchMarketStatus() {
       date ? `&date=${date}` : ''
     }&state=${state}&apikey=${API_KEY}`;
   
-    const response = await axios.get(url); // Still returns CSV
-    const json = await csv().fromString(response.data); // Convert to JSON array
+    const response = await axios.get(url);
+    const json = await csv().fromString(response.data);
   
     return json;
   }

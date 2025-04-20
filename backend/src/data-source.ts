@@ -1,14 +1,9 @@
 // src/data-source.ts
 import { DataSource } from "typeorm";
 import { User } from "./entities/investor-entities/User";
-import { Portfolio } from "./entities/investor-entities/Portfolio";
-import { PortfolioStock } from "./entities/investor-entities/PortfolioStock";
-import { Transaction } from "./entities/investor-entities/Transaction";
-import { Watchlist } from "./entities/investor-entities/Watchlist";
-import { Stock } from "./entities/investor-entities/Stock";
 import * as dotenv from "dotenv";
+import { Secret } from "./entities/database-entities/Secret";
 
-// Load environment variables from .env file
 dotenv.config();
 
 export const AppDataSource = new DataSource({
@@ -17,10 +12,22 @@ export const AppDataSource = new DataSource({
   port: parseInt(process.env.DB_PORT || "5432", 10),
   username: process.env.DB_USER || "devonfennell",
   password: process.env.DB_PASSWORD || "HaHaEmMu20@%",
-  database: process.env.DB_NAME || "investment_db",
-  synchronize: process.env.NODE_ENV === "development", // True in dev, false in production
+  database: process.env.DB_NAME || "postgres",
+  synchronize: true,
+  // dropSchema: true,
+  /*
+    Setting 'dropSchema' to true and running the 
+    server will purge the database of all entries 
+    and reset all schema.
+
+      TODO:
+
+      Remove 'dropSchema' from this dataScoure but
+      keeping while in early development.
+
+  */ 
   logging: process.env.NODE_ENV === "development",
-  entities: [User, Portfolio, PortfolioStock, Transaction, Watchlist, Stock],
+  entities: [User, Secret],
   migrations: [],
   subscribers: [],
 });

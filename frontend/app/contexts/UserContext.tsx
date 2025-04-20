@@ -63,7 +63,7 @@ export const UserContext = createContext<UserContextType>({
 });
 
 export const UserProvider = ({ children }: { children: React.ReactNode }) => {
-  const { token } = useAuth();
+  const { token, authLoading } = useAuth();
   const router = useRouter();
   const x = usePathname();
   const [profile, setProfile] = useState<UserProfile | null>(null);
@@ -127,17 +127,23 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
   }
 
   useEffect(() => {
-    console.log(x)
+    console.log("Token:", token);
+    console.log("Auth loading:", authLoading);
+    // console.log("Profile:", profile);
+    console.log("User loading:", loading);
+
+    if (authLoading) return;
+
     if (token) {
       fetchProfile();
     } else {
       setProfile(null);
       setLoading(false);
       if (!localStorage.getItem("token") || profile == null) {
-        router.push("/pages/sign-in")
+        router.push("/pages/sign-in");
       }
     }
-  }, [token]);
+  }, [token, authLoading]);
 
   return (
     <UserContext.Provider value={{ profile, loading, refetchProfile: fetchProfile, update, }}>

@@ -1,5 +1,6 @@
-// middleware/auth.ts
-import { Request, Response, NextFunction } from "express";
+// middleware/authMiddleware.ts
+import { Response, NextFunction } from "express";
+import { Request } from "../types/express";
 import jwt from "jsonwebtoken";
 import { AppDataSource } from "../data-source";
 import { User } from "../entities/investor-entities/User";
@@ -28,15 +29,15 @@ export function authMiddleware(req: Request, res: Response, next: NextFunction):
     const userId = parseInt(decodedPayload.userId, 10);
 
     userRepository
-      .findOne({ where: { id: userId } })
+      .findOne({ where: { _id: userId } })
       .then((user) => {
         if (!user) {
           res.status(404).json({ message: "User not found." });
           return;
         }
 
-        req.user = user; // Attach user to request
-        next(); // Proceed to next middleware/route
+        req.user = user;
+        next();
       })
       .catch((dbErr) => {
         console.error("Database error:", dbErr);

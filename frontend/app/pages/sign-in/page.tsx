@@ -20,7 +20,7 @@ export default function SignInPage() {
         await login(email, password);
       } else {
         await register(email, password);
-        await login(email, password); // auto-login after registration
+        await login(email, password);
       }
       router.push("/");
     } catch (err: any) {

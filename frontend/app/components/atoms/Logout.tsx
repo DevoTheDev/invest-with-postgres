@@ -9,14 +9,7 @@ type Props = {
 }
 
 const Logout = (props: Props) => {
-    const { logout, token } = useAuth();
-    const router = useRouter();
-
-    React.useEffect(() => {
-        if(token === null) {
-            router.push("/pages/sign-in");
-        }
-    }, [token]);
+    const { logout } = useAuth();
 
   return (
     <div

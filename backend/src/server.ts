@@ -7,7 +7,8 @@ import { errorHandler } from "./middleware/errorHandler";
 import { logMessage } from "./utils/logger";
 import marketRoutes from './routes/marketRoutes';
 import alphaVantageRoutes from "./routes/alphaVantageRoutes";
-import polygonIoRoutes from "./routes/polygonIoRoutes"
+import polygonIoRoutes from "./routes/polygonIoRoutes";
+import secureKeysRoutes from "./routes/secureKeysRoutes";
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -21,9 +22,11 @@ app.use(express.json());
 
 // Routes
 app.use("/api/users", userRoutes);
+app.use("/api/secure-keys", secureKeysRoutes);
 app.use("/api/market",  marketRoutes);
 app.use("/api/alpha-vantage", alphaVantageRoutes);
 app.use("/api/polygon-io", polygonIoRoutes);
+
 
 // ✅ Global Error Handler (after routes)
 app.use(errorHandler);
