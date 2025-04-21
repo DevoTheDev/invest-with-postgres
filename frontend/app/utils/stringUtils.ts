@@ -17,3 +17,20 @@ export const formatHeader = (key: string): string => {
       .replace(/([a-z])([A-Z])/g, '$1 $2') // Insert space before capital letters
       .replace(/^[a-z]/, str => str.toUpperCase()); // Capitalize the first letter
   };
+
+
+  export function formatRoute(route: string): string {
+    // Handle empty or invalid input
+    if (!route || typeof route !== 'string') {
+      return '';
+    }
+  
+    // Remove leading slash
+    const cleanedRoute = route.replace(/^\/+/, '');
+  
+    // Capitalize first letter, preserve rest
+    if (cleanedRoute.length === 0) {
+      return '';
+    }
+    return cleanedRoute.charAt(0).toUpperCase() + cleanedRoute.slice(1);
+  }

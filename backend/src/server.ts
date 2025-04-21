@@ -20,13 +20,17 @@ app.use(cors({
 
 app.use(express.json());
 
+// ✅ Test route to verify API connectivity
+app.get("/api/ping", (_req, res) => {
+    res.status(200).json({ message: "✅ API is live!" });
+});
+
 // Routes
 app.use("/api/users", userRoutes);
 app.use("/api/secure-keys", secureKeysRoutes);
 app.use("/api/market",  marketRoutes);
 app.use("/api/alpha-vantage", alphaVantageRoutes);
 app.use("/api/polygon-io", polygonIoRoutes);
-
 
 // ✅ Global Error Handler (after routes)
 app.use(errorHandler);

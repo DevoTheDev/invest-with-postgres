@@ -2,26 +2,9 @@
 import React, { createContext, useState, useEffect, useContext } from "react";
 import axios from "axios";
 import { useRouter, usePathname } from "next/navigation";
-import { API_BASE_URL } from "./AuthContext";
+import { Investment } from "./MarketContext";
 import { useAuth } from "../hooks/useAuth";
 
-export type Ticker = {
-  ticker: string;
-}
-export type Company = Ticker & {
-  name: string,
-  marketCap?: number,
-  sector?: string
-}
-export type Stock = Company & {
-  sharePrice: number
-  shareCount: number;
-}
-export type Investment = Stock & {
-  sharesOwned: number;
-}
-
-// Define UserProfile type
 export type UserProfile = {
   id: string;
   email: string;
@@ -30,8 +13,6 @@ export type UserProfile = {
   accountBalance?: number;
   isActive?: boolean;
   investments: Investment[];
-  watchList?: Ticker[];
-  transactions?: Object[]
 };
 
 type UserContextType = {
@@ -44,37 +25,29 @@ type UserContextType = {
     balance: (newBalance: number) => Promise<void>;
     deactivate: () => Promise<any>;
     reactivate: () => Promise<any>;
-  }
+  };
 };
 
 export const UserContext = createContext<UserContextType>({
   profile: null,
   loading: true,
-  refetchProfile: async () => { },
-  update: function (): {
-    name: (firstName?: string, lastName?: string) => Promise<void>;
-    email: (email?: string) => Promise<void>;
-    balance: (newBalance: number) => Promise<void>;
-    deactivate: () => Promise<any>;
-    reactivate: () => Promise<any>;
-  } {
+  refetchProfile: async () => {},
+  update: () => {
     throw new Error("Function not implemented.");
-  }
+  },
 });
 
 export const UserProvider = ({ children }: { children: React.ReactNode }) => {
-  const { token, authLoading } = useAuth();
+  const { token, authLoading, apiBaseUrl } = useAuth();
   const router = useRouter();
-  const x = usePathname();
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
 
-
   const fetchProfile = async () => {
-    if (!token) return;
+    if (!token || !apiBaseUrl) return;
     try {
       setLoading(true);
-      const res = await axios.get(`${API_BASE_URL}/users`, {
+      const res = await axios.get(`${apiBaseUrl}/users/me`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -89,15 +62,15 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   const updateProfile = async (updates: Partial<UserProfile>) => {
-    if (!token) return;
+    if (!token || !apiBaseUrl) return;
     try {
       setLoading(true);
-      const res = await axios.put(`${API_BASE_URL}/users`, updates, {
+      const res = await axios.put(`${apiBaseUrl}/users`, updates, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
-      setProfile(res.data.user); // Assuming the API responds with the updated user
+      setProfile(res.data.user);
     } catch (err) {
       console.error("Failed to update user profile", err);
     } finally {
@@ -110,28 +83,21 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
       return updateProfile({ firstName, lastName });
     }
     function email(email?: string) {
-      return updateProfile({ email })
+      return updateProfile({ email });
     }
     function balance(newBalance: number) {
-      return updateProfile({ accountBalance: newBalance })
+      return updateProfile({ accountBalance: newBalance });
     }
     function deactivate() {
       return updateProfile({ isActive: false });
     }
     function reactivate() {
-      return updateProfile({ isActive: true })
+      return updateProfile({ isActive: true });
     }
-    return {
-      name, email, balance, deactivate, reactivate
-    }
-  }
+    return { name, email, balance, deactivate, reactivate };
+  };
 
   useEffect(() => {
-    console.log("Token:", token);
-    console.log("Auth loading:", authLoading);
-    // console.log("Profile:", profile);
-    console.log("User loading:", loading);
-
     if (authLoading) return;
 
     if (token) {
@@ -143,10 +109,12 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
         router.push("/pages/sign-in");
       }
     }
-  }, [token, authLoading]);
+  }, [token, authLoading, apiBaseUrl]);
 
   return (
-    <UserContext.Provider value={{ profile, loading, refetchProfile: fetchProfile, update, }}>
+    <UserContext.Provider
+      value={{ profile, loading, refetchProfile: fetchProfile, update }}
+    >
       {children}
     </UserContext.Provider>
   );

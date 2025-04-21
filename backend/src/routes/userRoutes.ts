@@ -71,8 +71,8 @@ router.post("/login", async (req, res): Promise<void> => {
   }
 });
 
-// ------------------------- GET USER -------------------------
-router.get("/", async (req, res): Promise<void> => {
+// ------------------------- GET /users/me -------------------------
+router.get("/me", async (req, res): Promise<void> => {
   try {
     const token = req.headers.authorization?.split(" ")[1];
     if (!token) {
@@ -95,8 +95,8 @@ router.get("/", async (req, res): Promise<void> => {
   }
 });
 
-// ------------------------- PUT USER -------------------------
-router.put("/", async (req, res): Promise<void> => {
+// ------------------------- PUT /users/me -------------------------
+router.put("/me", async (req, res): Promise<void> => {
   try {
     const token = req.headers.authorization?.split(" ")[1];
     if (!token) {

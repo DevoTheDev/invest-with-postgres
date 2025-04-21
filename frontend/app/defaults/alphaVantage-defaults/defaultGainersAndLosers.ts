@@ -11,7 +11,7 @@ Example URL: {{ericInvestUrl}}/api/alpha-vantage/top-gainers-losers
 
 */
 
-import { TopGainersAndLosers } from "../../types/marketTypes";
+import { TopGainersAndLosers } from "../../types/alphaVantageTypes";
 
 export const defaultGainersAndLosers: TopGainersAndLosers = {
     "metadata": "Top gainers, losers, and most actively traded US tickers - DATA DELAYED BY 15 MINUTES",

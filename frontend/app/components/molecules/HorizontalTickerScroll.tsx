@@ -75,7 +75,7 @@ const HorizontalTickerScroll = <T,>({
         {/* This inner div gets cloned */}
         <div className="flex items-center" ref={tickerRef}>
           {data.map((item, idx) => (
-            <div key={idx} className="flex items-center">
+            <div key={idx} className="flex items-center cursor-pointer">
               {renderItem(item, idx)}
               {idx < data.length - 1 && (
                 <span className="text-zinc-400 text-xs mx-6 select-none">|</span>
