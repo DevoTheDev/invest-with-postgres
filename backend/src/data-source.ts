@@ -13,7 +13,7 @@ export const AppDataSource = new DataSource({
   port: parseInt(process.env.DB_PORT || "5432", 10),
   username: process.env.DB_USER || "devonfennell",
   password: process.env.DB_PASSWORD || "HaHaEmMu20@%",
-  database: process.env.DB_NAME || "postgres",
+  database: process.env.DB_NAME || "develement_app",
   synchronize: true,
   // dropSchema: true,
   /*
