@@ -1,9 +1,9 @@
 // src/utils/GetSecret.ts
 import { AppDataSource } from '../data-source';
-import { Secret } from '../entities/database-entities/Secret';
+import { Secret } from '../entities/Secret';
 import { logMessage } from './logger';
 
-type SecretKeyName = 'alpha_vantage_key' | 'polygon_io_key';
+type SecretKeyName = 'alpha_vantage_key' | 'polygon_io_key' | 'jwt_secret';
 
 const secretCache = new Map<SecretKeyName, string>();
 

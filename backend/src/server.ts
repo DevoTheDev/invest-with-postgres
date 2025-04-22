@@ -9,6 +9,8 @@ import marketRoutes from './routes/marketRoutes';
 import alphaVantageRoutes from "./routes/alphaVantageRoutes";
 import polygonIoRoutes from "./routes/polygonIoRoutes";
 import secureKeysRoutes from "./routes/secureKeysRoutes";
+import profileRoutes from './routes/profileRoutes';
+import { requestLogger } from "./middleware/requestLogger";
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -19,6 +21,7 @@ app.use(cors({
 }));
 
 app.use(express.json());
+app.use(requestLogger);
 
 // ✅ Test route to verify API connectivity
 app.get("/api/ping", (_req, res) => {
@@ -27,6 +30,7 @@ app.get("/api/ping", (_req, res) => {
 
 // Routes
 app.use("/api/users", userRoutes);
+app.use("/api/profiles", profileRoutes);
 app.use("/api/secure-keys", secureKeysRoutes);
 app.use("/api/market",  marketRoutes);
 app.use("/api/alpha-vantage", alphaVantageRoutes);

@@ -1,8 +1,9 @@
 // src/data-source.ts
 import { DataSource } from "typeorm";
-import { User } from "./entities/investor-entities/User";
+import { User } from "./entities/User";
 import * as dotenv from "dotenv";
-import { Secret } from "./entities/database-entities/Secret";
+import { Secret } from "./entities/Secret";
+import { Profile } from "./entities/Profile";
 
 dotenv.config();
 
@@ -27,7 +28,7 @@ export const AppDataSource = new DataSource({
 
   */ 
   logging: process.env.NODE_ENV === "development",
-  entities: [User, Secret],
+  entities: [User, Secret, Profile],
   migrations: [],
   subscribers: [],
 });

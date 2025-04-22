@@ -15,6 +15,8 @@
     "@polygon.io/client-js": "^7.4.0",
     "axios": "^1.8.4",
     "bcryptjs": "^3.0.2",
+    "class-transformer": "^0.5.1",
+    "class-validator": "^0.14.1",
     "cors": "^2.8.5",
     "csvtojson": "^2.0.10",
     "dotenv": "^16.4.7",
@@ -22,7 +24,7 @@
     "jsonwebtoken": "^9.0.2",
     "pg": "^8.14.1",
     "reflect-metadata": "^0.2.2",
-    "typeorm": "^0.3.21"
+    "typeorm": "^0.3.22"
   },
   "devDependencies": {
     "@types/bcryptjs": "^2.4.6",

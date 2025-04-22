@@ -1,119 +1,186 @@
 "use client";
-import React, { createContext, useState, useEffect, useContext } from "react";
+import React, { createContext, useState, useEffect } from "react";
 import axios from "axios";
-import { useRouter, usePathname } from "next/navigation";
-import { Investment } from "./MarketContext";
+import { useRouter } from "next/navigation";
 import { useAuth } from "../hooks/useAuth";
 
 export type UserProfile = {
   id: string;
   email: string;
-  firstName?: string;
-  lastName?: string;
-  accountBalance?: number;
-  isActive?: boolean;
-  investments: Investment[];
+  firstName: string | null;
+  lastName: string | null;
+  phoneNumber: string | null;
+  birthday: string | null;
+  created_at: string;
+  updated_at: string;
 };
 
 type UserContextType = {
   profile: UserProfile | null;
   loading: boolean;
+  error: string | null;
   refetchProfile: () => Promise<void>;
-  update: () => {
-    name: (firstName?: string, lastName?: string) => Promise<void>;
-    email: (email?: string) => Promise<void>;
-    balance: (newBalance: number) => Promise<void>;
-    deactivate: () => Promise<any>;
-    reactivate: () => Promise<any>;
-  };
+  createProfile: (data: Partial<UserProfile>) => Promise<void>;
+  updateProfile: (data: Partial<UserProfile>) => Promise<void>;
+  deleteProfile: () => Promise<void>;
 };
 
 export const UserContext = createContext<UserContextType>({
   profile: null,
   loading: true,
+  error: null,
   refetchProfile: async () => {},
-  update: () => {
-    throw new Error("Function not implemented.");
-  },
+  createProfile: async () => {},
+  updateProfile: async () => {},
+  deleteProfile: async () => {},
 });
 
 export const UserProvider = ({ children }: { children: React.ReactNode }) => {
-  const { token, authLoading, apiBaseUrl } = useAuth();
+  const { token, authLoading, apiBaseUrl, user } = useAuth();
   const router = useRouter();
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   const fetchProfile = async () => {
-    if (!token || !apiBaseUrl) return;
+    if (!token || !apiBaseUrl || !user?._id) return;
     try {
       setLoading(true);
-      const res = await axios.get(`${apiBaseUrl}/users/me`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+      setError(null);
+      const res = await axios.get(`${apiBaseUrl}/profiles/${user._id}`, {
+        headers: { Authorization: `Bearer ${token}` },
       });
-      setProfile(res.data);
-    } catch (err) {
-      console.error("Failed to fetch user profile", err);
+      setProfile({
+        id: String(res.data.user_id),
+        email: res.data.email,
+        firstName: res.data.firstName,
+        lastName: res.data.lastName,
+        phoneNumber: res.data.phoneNumber,
+        birthday: res.data.birthday,
+        created_at: res.data.created_at || new Date().toISOString(),
+        updated_at: res.data.updated_at || new Date().toISOString(),
+      });
+    } catch (err: any) {
+      if (err.response?.status === 404) {
+        setProfile(null);
+      } else {
+        console.error("Failed to fetch profile", err);
+        setError(err.response?.data?.message || "Failed to fetch profile");
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const createProfile = async (data: Partial<UserProfile>) => {
+    if (!token || !apiBaseUrl || !user?._id) return;
+    try {
+      setLoading(true);
+      setError(null);
+      const res = await axios.post(
+        `${apiBaseUrl}/profiles`,
+        {
+          firstName: data.firstName || null,
+          lastName: data.lastName || null,
+          phoneNumber: data.phoneNumber || null,
+          birthday: data.birthday || null,
+        },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      setProfile({
+        id: String(user._id),
+        email: user.email,
+        firstName: res.data.profile.firstName,
+        lastName: res.data.profile.lastName,
+        phoneNumber: res.data.profile.phoneNumber,
+        birthday: res.data.profile.birthday,
+        created_at: res.data.profile.created_at || new Date().toISOString(),
+        updated_at: res.data.profile.updated_at || new Date().toISOString(),
+      });
+    } catch (err: any) {
+      console.error("Failed to create profile", err);
+      setError(err.response?.data?.message || "Failed to create profile");
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const updateProfile = async (data: Partial<UserProfile>) => {
+    if (!token || !apiBaseUrl || !user?._id) return;
+    try {
+      setLoading(true);
+      setError(null);
+      const payload = {
+        firstName: data.firstName !== "" ? data.firstName : null,
+        lastName: data.lastName !== "" ? data.lastName : null,
+        phoneNumber: data.phoneNumber !== "" ? data.phoneNumber : null,
+        birthday: data.birthday !== "" ? data.birthday : null,
+      };
+      const res = await axios.put(
+        `${apiBaseUrl}/profiles/${parseInt(user._id, 10)}`,
+        payload,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      setProfile({
+        id: String(user._id),
+        email: user.email,
+        firstName: res.data.profile.firstName,
+        lastName: res.data.profile.lastName,
+        phoneNumber: res.data.profile.phoneNumber,
+        birthday: res.data.profile.birthday,
+        created_at: res.data.profile.created_at || profile?.created_at || new Date().toISOString(),
+        updated_at: res.data.profile.updated_at || new Date().toISOString(),
+      });
+    } catch (err: any) {
+      console.error("Failed to update profile", err);
+      setError(err.response?.data?.message || "Failed to update profile");
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const deleteProfile = async () => {
+    if (!token || !apiBaseUrl || !user?._id) return;
+    try {
+      setLoading(true);
+      setError(null);
+      await axios.delete(`${apiBaseUrl}/profiles/${parseInt(user._id, 10)}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
       setProfile(null);
+      router.push("/pages/sign-in");
+    } catch (err: any) {
+      console.error("Failed to delete profile", err);
+      setError(err.response?.data?.message || "Failed to delete profile");
+      throw err;
     } finally {
       setLoading(false);
     }
-  };
-
-  const updateProfile = async (updates: Partial<UserProfile>) => {
-    if (!token || !apiBaseUrl) return;
-    try {
-      setLoading(true);
-      const res = await axios.put(`${apiBaseUrl}/users`, updates, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      setProfile(res.data.user);
-    } catch (err) {
-      console.error("Failed to update user profile", err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const update = () => {
-    function name(firstName?: string, lastName?: string) {
-      return updateProfile({ firstName, lastName });
-    }
-    function email(email?: string) {
-      return updateProfile({ email });
-    }
-    function balance(newBalance: number) {
-      return updateProfile({ accountBalance: newBalance });
-    }
-    function deactivate() {
-      return updateProfile({ isActive: false });
-    }
-    function reactivate() {
-      return updateProfile({ isActive: true });
-    }
-    return { name, email, balance, deactivate, reactivate };
   };
 
   useEffect(() => {
     if (authLoading) return;
-
-    if (token) {
+    if (user) {
       fetchProfile();
     } else {
-      setProfile(null);
       setLoading(false);
-      if (!localStorage.getItem("token") || profile == null) {
+      if (!localStorage.getItem("token")) {
         router.push("/pages/sign-in");
       }
     }
-  }, [token, authLoading, apiBaseUrl]);
+  }, [token, authLoading, apiBaseUrl, user]);
+
+  useEffect(() => {
+    if (!user || !profile) {
+      router.push("/");
+    }
+  }, [profile, user, router]);
 
   return (
     <UserContext.Provider
-      value={{ profile, loading, refetchProfile: fetchProfile, update }}
+      value={{ profile, loading, error, refetchProfile: fetchProfile, createProfile, updateProfile, deleteProfile }}
     >
       {children}
     </UserContext.Provider>

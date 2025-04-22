@@ -1,15 +1,15 @@
-// middleware/authMiddleware.ts
 import { Response, NextFunction } from "express";
 import { Request } from "../types/express";
 import jwt from "jsonwebtoken";
 import { AppDataSource } from "../data-source";
-import { User } from "../entities/investor-entities/User";
+import { User } from "../entities/User";
+import { getSecret } from "../utils/GetSecret";
 
 const userRepository = AppDataSource.getRepository(User);
-const JWT_SECRET = process.env.JWT_SECRET || "your-secret-key";
 
-export function authMiddleware(req: Request, res: Response, next: NextFunction): void {
+export async function authMiddleware(req: Request, res: Response, next: NextFunction): Promise<void> {
   const authHeader = req.headers.authorization;
+  const JWT_SECRET = await getSecret('jwt_secret');
 
   if (!authHeader || !authHeader.startsWith("Bearer ")) {
     res.status(401).json({ message: "Missing or invalid Authorization header." });
@@ -18,30 +18,20 @@ export function authMiddleware(req: Request, res: Response, next: NextFunction):
 
   const token = authHeader.split(" ")[1];
 
-  jwt.verify(token, JWT_SECRET, (err, decoded) => {
-    if (err) {
-      console.error("Authentication error:", err);
-      res.status(401).json({ message: "Invalid or expired token." });
+  try {
+    const decoded = jwt.verify(token, JWT_SECRET) as { userId: string; email: string };
+    const user = await userRepository.findOne({ where: { _id: Number(decoded.userId) } });
+
+    if (!user) {
+      res.status(404).json({ message: "User not found." });
       return;
     }
 
-    const decodedPayload = decoded as { userId: string };
-    const userId = parseInt(decodedPayload.userId, 10);
-
-    userRepository
-      .findOne({ where: { _id: userId } })
-      .then((user) => {
-        if (!user) {
-          res.status(404).json({ message: "User not found." });
-          return;
-        }
-
-        req.user = user;
-        next();
-      })
-      .catch((dbErr) => {
-        console.error("Database error:", dbErr);
-        res.status(500).json({ message: "Internal server error." });
-      });
-  });
+    req.user = user;
+    next();
+  } catch (err) {
+    console.error("Authentication error:", err);
+    res.status(401).json({ message: "Invalid or expired token." });
+    return;
+  }
 }

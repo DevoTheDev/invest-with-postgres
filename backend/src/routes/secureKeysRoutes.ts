@@ -2,7 +2,7 @@
 import express from "express";
 import { authMiddleware } from "../middleware/authMiddleware";
 import { AppDataSource } from "../data-source";
-import { Secret } from "../entities/database-entities/Secret";
+import { Secret } from "../entities/Secret";
 
 const router = express.Router();
 const secretRepository = AppDataSource.getRepository(Secret);

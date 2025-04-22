@@ -10,14 +10,12 @@ const AppBuffer = (props: Props) => {
     const router = useRouter();
 
     const { profile, loading: userLoading } = useUser();
-    const { authLoading } = useAuth();
+    const { authLoading, user } = useAuth();
 
     React.useEffect(() => {
       if (authLoading || userLoading) return;
-    
-    console.log("Profile:", profile);
-
-      if (profile) {
+  
+      if (!authLoading && user) {
         router.push("/portfolio");
       } else {
         router.push("/pages/sign-in");
