@@ -131,8 +131,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const register = async (email: string, password: string) => {
     try {
       await axios.post(`${apiBaseUrl}/users/register`, { email, password });
+      await login(email, password); // Assuming login function exists
     } catch (err: any) {
-      throw new Error(err.response?.data?.message || "Registration failed");
+      throw new Error(err.response?.data?.message || 'Registration failed');
     }
   };
 

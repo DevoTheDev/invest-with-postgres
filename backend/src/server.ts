@@ -2,14 +2,15 @@ import express from "express";
 import "reflect-metadata";
 import cors from "cors";
 import { AppDataSource } from "./data-source";
-import userRoutes from "./routes/userRoutes";
+import userRoutes from "./routes/user-routes/userRoutes";
 import { errorHandler } from "./middleware/errorHandler";
 import { logMessage } from "./utils/logger";
-import marketRoutes from './routes/marketRoutes';
-import alphaVantageRoutes from "./routes/alphaVantageRoutes";
-import polygonIoRoutes from "./routes/polygonIoRoutes";
-import secureKeysRoutes from "./routes/secureKeysRoutes";
-import profileRoutes from './routes/profileRoutes';
+import marketRoutes from './routes/market-routes/marketRoutes';
+import alphaVantageRoutes from "./routes/market-routes/alphaVantageRoutes";
+import polygonIoRoutes from "./routes/market-routes/polygonIoRoutes";
+import secureKeysRoutes from "./routes/user-routes/secureKeysRoutes";
+import profileRoutes from './routes/user-routes/profileRoutes';
+import investorRoutes from "./routes/investor-routes/investorRoutes";
 import { requestLogger } from "./middleware/requestLogger";
 
 const app = express();
@@ -31,6 +32,7 @@ app.get("/api/ping", (_req, res) => {
 // Routes
 app.use("/api/users", userRoutes);
 app.use("/api/profiles", profileRoutes);
+app.use("/api/investor", investorRoutes);
 app.use("/api/secure-keys", secureKeysRoutes);
 app.use("/api/market",  marketRoutes);
 app.use("/api/alpha-vantage", alphaVantageRoutes);

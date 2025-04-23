@@ -1,15 +1,14 @@
 // backend/src/entities/database-entities/Secret.ts
-import { Entity, PrimaryGeneratedColumn, Column } from "typeorm";
+import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
 
-@Entity({ name: "secrets" })
+@Entity('secrets')
 export class Secret {
   @PrimaryGeneratedColumn()
   id!: number;
 
-  @Column({nullable: true})
+  @Column({ type: 'varchar', length: 50 })
   key_name!: string;
 
-  @Column()
+  @Column({ type: 'varchar', length: 255 })
   key_value!: string;
 }
-

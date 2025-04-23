@@ -2,9 +2,10 @@
 import React, { useState, useEffect } from "react";
 import { useUser } from "@/app/hooks/useUser";
 import Logout from "@/app/components/atoms/Logout";
+import DeleteAccount from "@/app/components/atoms/DeleteAccount";
 
 const Page = () => {
-  const { profile, loading, error, createProfile, updateProfile, deleteProfile } = useUser();
+  const { profile, loading, error, createProfile, updateProfile } = useUser();
   const [editing, setEditing] = useState(false);
   const [creating, setCreating] = useState(false);
   const [formData, setFormData] = useState({
@@ -21,7 +22,7 @@ const Page = () => {
         firstName: profile.firstName || "",
         lastName: profile.lastName || "",
         phoneNumber: profile.phoneNumber || "",
-        birthday: profile.birthday || "",
+        birthday: profile.birthday ? new Date(profile.birthday).toISOString().split('T')[0] : "",
       });
       setCreating(false);
     }
@@ -34,7 +35,10 @@ const Page = () => {
 
   const handleCreate = async () => {
     try {
-      await createProfile(formData);
+      await createProfile({
+        ...formData,
+        birthday: formData.birthday || null,
+      });
       setCreating(false);
       setFormErrors([]);
     } catch (err: any) {
@@ -45,22 +49,15 @@ const Page = () => {
 
   const handleUpdate = async () => {
     try {
-      await updateProfile(formData);
+      await updateProfile({
+        ...formData,
+        birthday: formData.birthday || null,
+      });
       setEditing(false);
       setFormErrors([]);
     } catch (err: any) {
       console.error("Update profile failed", err);
       setFormErrors(err.response?.data?.errors?.map((e: any) => e.message) || ["Failed to update profile"]);
-    }
-  };
-
-  const handleDelete = async () => {
-    if (confirm("Are you sure you want to delete your profile?")) {
-      try {
-        await deleteProfile();
-      } catch (err) {
-        console.error("Delete profile failed", err);
-      }
     }
   };
 
@@ -167,20 +164,20 @@ const Page = () => {
               className="mt-1 w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-400"
             />
           ) : (
-            <p className="mt-1 text-gray-100">{profile?.birthday || "Not set"}</p>
+            <p className="mt-1 text-gray-100">{profile?.birthday ? new Date(profile.birthday).toLocaleDateString() : "Not set"}</p>
           )}
         </div>
 
         {/* Created At */}
         <div>
           <label className="block text-sm font-medium text-gray-300">Created At</label>
-          <p className="mt-1 text-gray-100">{new Date(profile?.created_at || "").toLocaleString()}</p>
+          <p className="mt-1 text-gray-100">{profile?.created_at ? new Date(profile.created_at).toLocaleString() : "Not set"}</p>
         </div>
 
         {/* Updated At */}
         <div>
           <label className="block text-sm font-medium text-gray-300">Updated At</label>
-          <p className="mt-1 text-gray-100">{new Date(profile?.updated_at || "").toLocaleString()}</p>
+          <p className="mt-1 text-gray-100">{profile?.updated_at ? new Date(profile.updated_at).toLocaleString() : "Not set"}</p>
         </div>
       </section>
 
@@ -209,12 +206,7 @@ const Page = () => {
           </button>
         )}
         {!creating && (
-          <button
-            onClick={handleDelete}
-            className="px-5 py-2 bg-red-500 hover:bg-red-600 text-white font-semibold rounded-md shadow"
-          >
-            Delete Profile
-          </button>
+          <DeleteAccount />
         )}
         <Logout
           styles={`
@@ -230,6 +222,5 @@ const Page = () => {
     </main>
   );
 };
-
 
 export default Page;

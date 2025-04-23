@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import * as alphaVantageController from '../controllers/alphaVantageController';
+import * as alphaVantageController from '../../controllers/alphaVantageController';
 
 const router = Router();
 

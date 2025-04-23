@@ -4,6 +4,15 @@ import { User } from "./entities/User";
 import * as dotenv from "dotenv";
 import { Secret } from "./entities/Secret";
 import { Profile } from "./entities/Profile";
+import { Investor } from './entities/Investor-Entities/Investor';
+import { Watchlist } from './entities/Investor-Entities/Watchlist';
+import { WatchlistTicker } from './entities/Investor-Entities/WatchlistTicker';
+import { Investment } from './entities/Investor-Entities/Investment';
+import { Exerciser } from './entities/Exerciser-Entities/Exerciser';
+import { Workout } from './entities/Exerciser-Entities/Workout';
+import { CreateExerciserTables1729516800001 } from "./scripts/CreateExerciserTables";
+import { CreateInvestmentTables1729516800000 } from "./scripts/CreateInvestmentTables";
+import { UpdateUserTable1729516800002 } from "./scripts/UpdateUserTable";
 
 dotenv.config();
 
@@ -13,7 +22,7 @@ export const AppDataSource = new DataSource({
   port: parseInt(process.env.DB_PORT || "5432", 10),
   username: process.env.DB_USER || "devonfennell",
   password: process.env.DB_PASSWORD || "HaHaEmMu20@%",
-  database: process.env.DB_NAME || "postgres",
+  database: process.env.DB_NAME || "develement_app",
   synchronize: true,
   // dropSchema: true,
   /*
@@ -28,7 +37,7 @@ export const AppDataSource = new DataSource({
 
   */ 
   logging: process.env.NODE_ENV === "development",
-  entities: [User, Secret, Profile],
+  entities: [User, Secret, Profile, Investor, Investment, Watchlist, WatchlistTicker, Workout, Exerciser],
   migrations: [],
   subscribers: [],
 });

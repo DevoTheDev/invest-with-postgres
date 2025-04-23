@@ -1,4 +1,3 @@
-// src/utils/GetSecret.ts
 import { AppDataSource } from '../data-source';
 import { Secret } from '../entities/Secret';
 import { logMessage } from './logger';

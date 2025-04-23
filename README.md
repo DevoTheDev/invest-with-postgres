@@ -4,7 +4,7 @@
     To get started:
 
         *   Navigate to the root directory
-            directories and run:
+            directory and run:
 
                 ~ npm install
                 

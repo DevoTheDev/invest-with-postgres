@@ -5,7 +5,9 @@
   "scripts": {
     "dev": "nodemon src/server.ts",
     "start": "node dist/server.js",
-    "typeorm": "typeorm-ts-node-commonjs"
+    "typeorm": "typeorm-ts-node-commonjs",
+    "migrate": "typeorm-ts-node-commonjs migration:run --dataSource src/data-source.ts",
+    "typeorm:generate": "typeorm-ts-node-commonjs migration:generate --dataSource src/data-source.ts"
   },
   "keywords": [],
   "author": "",

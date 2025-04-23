@@ -23,6 +23,7 @@ type UserContextType = {
   createProfile: (data: Partial<UserProfile>) => Promise<void>;
   updateProfile: (data: Partial<UserProfile>) => Promise<void>;
   deleteProfile: () => Promise<void>;
+  deleteUser: () => Promise<void>;
 };
 
 export const UserContext = createContext<UserContextType>({
@@ -33,10 +34,11 @@ export const UserContext = createContext<UserContextType>({
   createProfile: async () => {},
   updateProfile: async () => {},
   deleteProfile: async () => {},
+  deleteUser: async () => {},
 });
 
 export const UserProvider = ({ children }: { children: React.ReactNode }) => {
-  const { token, authLoading, apiBaseUrl, user } = useAuth();
+  const { token, authLoading, apiBaseUrl, user, logout } = useAuth();
   const router = useRouter();
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
@@ -107,21 +109,22 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   const updateProfile = async (data: Partial<UserProfile>) => {
-    if (!token || !apiBaseUrl || !user?._id) return;
+    if (!token || !apiBaseUrl || !user?._id) {
+      setError('Missing token or user ID');
+      throw new Error('Missing token or user ID');
+    }
     try {
       setLoading(true);
       setError(null);
       const payload = {
-        firstName: data.firstName !== "" ? data.firstName : null,
-        lastName: data.lastName !== "" ? data.lastName : null,
-        phoneNumber: data.phoneNumber !== "" ? data.phoneNumber : null,
-        birthday: data.birthday !== "" ? data.birthday : null,
+        firstName: data.firstName !== '' ? data.firstName : null,
+        lastName: data.lastName !== '' ? data.lastName : null,
+        phoneNumber: data.phoneNumber !== '' ? data.phoneNumber : null,
+        birthday: data.birthday !== '' ? data.birthday : null,
       };
-      const res = await axios.put(
-        `${apiBaseUrl}/profiles/${parseInt(user._id, 10)}`,
-        payload,
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
+      const res = await axios.put(`${apiBaseUrl}/profiles/${user._id}`, payload, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
       setProfile({
         id: String(user._id),
         email: user.email,
@@ -133,8 +136,8 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
         updated_at: res.data.profile.updated_at || new Date().toISOString(),
       });
     } catch (err: any) {
-      console.error("Failed to update profile", err);
-      setError(err.response?.data?.message || "Failed to update profile");
+      console.error('Failed to update profile', err);
+      setError(err.response?.data?.message || 'Failed to update profile');
       throw err;
     } finally {
       setLoading(false);
@@ -142,18 +145,45 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   const deleteProfile = async () => {
-    if (!token || !apiBaseUrl || !user?._id) return;
+    if (!token || !apiBaseUrl || !user?._id) {
+      setError('Missing token or user ID');
+      throw new Error('Missing token or user ID');
+    }
     try {
       setLoading(true);
       setError(null);
-      await axios.delete(`${apiBaseUrl}/profiles/${parseInt(user._id, 10)}`, {
+      await axios.delete(`${apiBaseUrl}/profiles/${user._id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setProfile(null);
-      router.push("/pages/sign-in");
     } catch (err: any) {
-      console.error("Failed to delete profile", err);
-      setError(err.response?.data?.message || "Failed to delete profile");
+      console.error('Failed to delete profile', err);
+      setError(err.response?.data?.message || 'Failed to delete profile');
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const deleteUser = async () => {
+    if (!token || !apiBaseUrl || !user?._id) {
+      setError('Missing token or user ID');
+      throw new Error('Missing token or user ID');
+    }
+    try {
+      setLoading(true);
+      setError(null);
+      await axios.delete(`${apiBaseUrl}/users/me`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setProfile(null);
+      logout();
+      deleteProfile();
+      localStorage.removeItem('token');
+      router.push('/pages/sign-in');
+    } catch (err: any) {
+      console.error('Failed to delete user', err);
+      setError(err.response?.data?.message || 'Failed to delete user');
       throw err;
     } finally {
       setLoading(false);
@@ -180,7 +210,16 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
 
   return (
     <UserContext.Provider
-      value={{ profile, loading, error, refetchProfile: fetchProfile, createProfile, updateProfile, deleteProfile }}
+      value={{ 
+        profile,
+        loading,
+        error,
+        refetchProfile: fetchProfile,
+        createProfile,
+        updateProfile,
+        deleteProfile,
+        deleteUser,
+      }}
     >
       {children}
     </UserContext.Provider>

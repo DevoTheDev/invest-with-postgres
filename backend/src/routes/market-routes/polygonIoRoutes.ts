@@ -1,6 +1,6 @@
 // src/routes/polygonIoRoutes.ts
 import { Router } from "express";
-import { getTickers, getTickerOverview } from "../services/Polygon.io";
+import { getTickers, getTickerOverview } from "../../services/Polygon.io";
 
 const router = Router();
 

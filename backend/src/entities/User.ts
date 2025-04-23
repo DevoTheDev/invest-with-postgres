@@ -1,14 +1,17 @@
 // src/entities/User.ts
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
 
-@Entity()
+@Entity('user')
 export class User {
   @PrimaryGeneratedColumn()
-  _id!: number;
+  id!: number;
 
-  @Column({ unique: true })
+  @Column({ name: '_id', type: 'varchar', unique: true })
+  _id!: string;
+
+  @Column({ type: 'varchar', length: 255, unique: true })
   email!: string;
 
-  @Column()
+  @Column({ type: 'varchar', length: 255 })
   password!: string;
 }
