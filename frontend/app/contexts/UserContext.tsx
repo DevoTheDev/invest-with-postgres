@@ -38,7 +38,7 @@ export const UserContext = createContext<UserContextType>({
 });
 
 export const UserProvider = ({ children }: { children: React.ReactNode }) => {
-  const { token, authLoading, apiBaseUrl, user, logout } = useAuth();
+  const { token, authLoading, apiBaseUrl, user, logout, validToken } = useAuth();
   const router = useRouter();
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
@@ -53,14 +53,14 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
         headers: { Authorization: `Bearer ${token}` },
       });
       setProfile({
-        id: String(res.data.user_id),
-        email: res.data.email,
-        firstName: res.data.firstName,
-        lastName: res.data.lastName,
-        phoneNumber: res.data.phoneNumber,
-        birthday: res.data.birthday,
-        created_at: res.data.created_at || new Date().toISOString(),
-        updated_at: res.data.updated_at || new Date().toISOString(),
+        id: String(res.data.profile.user_id),
+        email: user.email || res.data.profile.email,
+        firstName: res.data.profile.firstName,
+        lastName: res.data.profile.lastName,
+        phoneNumber: res.data.profile.phoneNumber,
+        birthday: res.data.profile.birthday,
+        created_at: res.data.profile.created_at || new Date().toISOString(),
+        updated_at: res.data.profile.updated_at || new Date().toISOString(),
       });
     } catch (err: any) {
       if (err.response?.status === 404) {
@@ -113,6 +113,15 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
       setError('Missing token or user ID');
       throw new Error('Missing token or user ID');
     }
+  
+    const isTokenValid = await validToken();
+    if (!isTokenValid) {
+      setError('Session expired. Please log in again.');
+      logout();
+      router.push('/pages/sign-in');
+      throw new Error('Invalid token');
+    }
+  
     try {
       setLoading(true);
       setError(null);
@@ -190,23 +199,18 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
     }
   };
 
-  useEffect(() => {
-    if (authLoading) return;
-    if (user) {
-      fetchProfile();
-    } else {
-      setLoading(false);
-      if (!localStorage.getItem("token")) {
-        router.push("/pages/sign-in");
-      }
-    }
-  }, [token, authLoading, apiBaseUrl, user]);
 
   useEffect(() => {
-    if (!user || !profile) {
-      router.push("/");
+    if (authLoading) return;
+    if(!user) {
+      setProfile(null);
     }
-  }, [profile, user, router]);
+    if (!user && !localStorage.getItem("token")) {
+      router.push("/pages/sign-in");
+    } else if (!profile && user) {
+      fetchProfile();
+    }
+  }, [token, authLoading, apiBaseUrl, user, profile, router]);
 
   return (
     <UserContext.Provider
