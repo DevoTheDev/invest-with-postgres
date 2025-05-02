@@ -3,9 +3,10 @@ import React, { useState, useEffect } from "react";
 import { useUser } from "@/app/hooks/useUser";
 import Logout from "@/app/components/atoms/Logout";
 import DeleteAccount from "@/app/components/atoms/DeleteAccount";
+import { Drops } from "@/app/types/DevTypes";
 
 const Page = () => {
-  const { profile, loading, error, createProfile, updateProfile } = useUser();
+  const { profile, loading, error, createProfile, updateProfile, refetchProfile } = useUser();
   const [editing, setEditing] = useState(false);
   const [creating, setCreating] = useState(false);
   const [formData, setFormData] = useState({
@@ -15,6 +16,7 @@ const Page = () => {
     birthday: "",
   });
   const [formErrors, setFormErrors] = useState<string[]>([]);
+  const [localLoading, setLocalLoading] = useState(false);
 
   useEffect(() => {
     if (profile) {
@@ -26,6 +28,7 @@ const Page = () => {
       });
       setCreating(false);
     }
+    Drops("Profile", profile);
   }, [profile]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -49,15 +52,19 @@ const Page = () => {
 
   const handleUpdate = async () => {
     try {
+      setLocalLoading(true);
       await updateProfile({
         ...formData,
         birthday: formData.birthday || null,
       });
+      await refetchProfile();
       setEditing(false);
       setFormErrors([]);
     } catch (err: any) {
       console.error("Update profile failed", err);
       setFormErrors(err.response?.data?.errors?.map((e: any) => e.message) || ["Failed to update profile"]);
+    } finally {
+      setLocalLoading(false);
     }
   };
 
@@ -90,7 +97,7 @@ const Page = () => {
         <div className="bg-red-600 text-white p-4 rounded-lg">
           <ul className="list-disc pl-5">
             {formErrors.map((err, i) => (
-              <li key={i}>{err}</li>
+              <li key={i}>{err === 'Invalid token' ? 'Your session has expired. Please log in again.' : err}</li>
             ))}
           </ul>
         </div>
@@ -193,9 +200,10 @@ const Page = () => {
         ) : editing ? (
           <button
             onClick={handleUpdate}
-            className="px-5 py-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-md shadow"
+            disabled={localLoading}
+            className={`px-5 py-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-md shadow ${localLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
           >
-            Save Changes
+            {localLoading ? 'Saving...' : 'Save Changes'}
           </button>
         ) : (
           <button
