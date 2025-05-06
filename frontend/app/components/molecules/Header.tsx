@@ -34,14 +34,14 @@ const Header = () => {
           </button>
             </div>
           {/* Optional: Add user avatar/info on right */}
-          <div className='px-16 mt-1.5 items-center w-full flex justify-start text-xs font-extralight text-white'>Welcome, {profile?.firstName || "User"}</div>
-          <div 
+          <div className='px-16 mt-1.5 items-center w-full flex justify-start text-xs font-extralight text-white'>Welcome, {profile?.name || "User"}</div>
+          {/* <div 
           onClick={handleUserLog}
           className={`
           px-16 py-4 mx-8 rounded-xl mt-1.5 items-center w-1/5 flex 
           justify-center text-md font-extralight
            text-white hover:bg-gray-300
-           `}>Log User</div>
+           `}>Log User</div> */}
 
           <div className="flex items-center gap-2">
             <div className="flex items-center">

@@ -12,6 +12,7 @@ import secureKeysRoutes from "./routes/user-routes/secureKeysRoutes";
 import profileRoutes from './routes/user-routes/profileRoutes';
 import investorRoutes from "./routes/investor-routes/investorRoutes";
 import { requestLogger } from "./middleware/requestLogger";
+import 'reflect-metadata';
 
 const app = express();
 const PORT = process.env.PORT || 3001;

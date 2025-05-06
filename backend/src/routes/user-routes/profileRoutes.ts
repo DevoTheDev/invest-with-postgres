@@ -6,26 +6,55 @@ import { Profile } from '../../entities/Profile';
 import { validate } from 'class-validator';
 import { plainToClass } from 'class-transformer';
 import { authMiddleware } from '../../middleware/authMiddleware';
-import { IsString, IsOptional, Matches, IsDateString } from 'class-validator';
+import { IsString, IsOptional, IsEmail, Matches, IsEnum, IsBoolean, IsObject } from 'class-validator';
 import { logMessage } from '../../utils/logger';
+import { ThemePreference, LanguageOption } from '../../types/shared/shared-types';
 
 class ProfileDTO {
   @IsString()
   @IsOptional()
-  firstName?: string | null;
+  name?: string;
+
+  @IsEmail()
+  @IsOptional()
+  email?: string;
+
+  @IsString()
+  @Matches(/^[a-zA-Z0-9_]{3,50}$/, { message: 'Username must be 3-50 characters and contain only letters, numbers, or underscores' })
+  @IsOptional()
+  username?: string;
 
   @IsString()
   @IsOptional()
-  lastName?: string | null;
+  bio?: string;
 
   @IsString()
   @IsOptional()
-  @Matches(/^\+?\d{10,15}$/, { message: 'phoneNumber must be a valid phone number' })
-  phoneNumber?: string | null;
+  avatarUrl?: string;
 
-  @IsDateString()
+  @IsEnum(ThemePreference)
   @IsOptional()
-  birthday?: Date | string | null;
+  themePreference?: ThemePreference;
+
+  @IsEnum(LanguageOption)
+  @IsOptional()
+  language?: LanguageOption;
+
+  @IsObject()
+  @IsOptional()
+  notifications?: { email: boolean; push: boolean };
+
+  @IsObject()
+  @IsOptional()
+  dataUsage?: { backgroundSync: boolean; activityLogs: boolean };
+
+  @IsBoolean()
+  @IsOptional()
+  isEmailVerified?: boolean;
+
+  @IsBoolean()
+  @IsOptional()
+  isActive?: boolean;
 }
 
 const router = Router();
@@ -40,7 +69,7 @@ router.post('/', authMiddleware, async (req: Request, res: Response): Promise<an
       return res.status(400).json({ message: 'Invalid user ID' });
     }
 
-    const existingProfile = await profileRepo.findOneBy({ user_id: userId });
+    const existingProfile = await profileRepo.findOne({ where: { id: userId } });
     if (existingProfile) {
       logMessage('error', `Profile already exists for user_id: ${userId}`);
       return res.status(400).json({ message: 'Profile already exists for this user' });
@@ -54,11 +83,20 @@ router.post('/', authMiddleware, async (req: Request, res: Response): Promise<an
     }
 
     const profile = new Profile();
-    profile.user_id = userId;
-    profile.firstName = dto.firstName ?? null;
-    profile.lastName = dto.lastName ?? null;
-    profile.phoneNumber = dto.phoneNumber ?? null;
-    profile.birthday = dto.birthday ? new Date(dto.birthday) : null;
+    profile.id = userId;
+    profile.name = dto.name ?? '';
+    profile.email = dto.email ?? '';
+    profile.username = dto.username ?? '';
+    profile.bio = dto.bio ?? undefined;
+    profile.avatarUrl = dto.avatarUrl ?? undefined;
+    profile.themePreference = dto.themePreference ?? ThemePreference.System;
+    profile.language = dto.language ?? LanguageOption.En;
+    profile.notifications = dto.notifications ?? { email: true, push: true };
+    profile.dataUsage = dto.dataUsage ?? { backgroundSync: false, activityLogs: false };
+    profile.isEmailVerified = dto.isEmailVerified ?? false;
+    profile.isActive = dto.isActive ?? true;
+    profile.created_at = new Date().toISOString();
+    profile.updated_at = new Date().toISOString();
 
     await profileRepo.save(profile);
     logMessage('info', `Profile created for user_id: ${userId}`);
@@ -78,13 +116,12 @@ router.get('/:userId', authMiddleware, async (req: Request, res: Response): Prom
       return res.status(400).json({ message: 'Invalid user ID' });
     }
 
-    // Ensure the requesting user matches the profile's user_id (optional security)
     if (req.user?._id !== userId) {
       logMessage('error', `Unauthorized access to profile for user_id: ${userId}`);
       return res.status(403).json({ message: 'Unauthorized' });
     }
 
-    const profile = await profileRepo.findOneBy({ user_id: userId });
+    const profile = await profileRepo.findOne({ where: { id: userId } });
     if (!profile) {
       logMessage('info', `Profile not found for user_id: ${userId}`);
       return res.status(404).json({ message: 'Profile not found' });
@@ -112,7 +149,7 @@ router.put('/:userId', authMiddleware, async (req: Request, res: Response): Prom
       return res.status(403).json({ message: 'Forbidden: You can only update your own profile' });
     }
 
-    const profile = await profileRepo.findOneBy({ user_id: userId });
+    const profile = await profileRepo.findOne({ where: { id: userId } });
     if (!profile) {
       logMessage('info', `Profile not found for user_id: ${userId}`);
       return res.status(404).json({ message: 'Profile not found' });
@@ -125,10 +162,18 @@ router.put('/:userId', authMiddleware, async (req: Request, res: Response): Prom
       return res.status(400).json({ message: 'Validation failed', errors });
     }
 
-    profile.firstName = dto.firstName ?? profile.firstName;
-    profile.lastName = dto.lastName ?? profile.lastName;
-    profile.phoneNumber = dto.phoneNumber ?? profile.phoneNumber;
-    profile.birthday = dto.birthday ? new Date(dto.birthday) : profile.birthday;
+    profile.name = dto.name ?? profile.name;
+    profile.email = dto.email ?? profile.email;
+    profile.username = dto.username ?? profile.username;
+    profile.bio = dto.bio ?? profile.bio;
+    profile.avatarUrl = dto.avatarUrl ?? profile.avatarUrl;
+    profile.themePreference = dto.themePreference ?? profile.themePreference;
+    profile.language = dto.language ?? profile.language;
+    profile.notifications = dto.notifications ?? profile.notifications;
+    profile.dataUsage = dto.dataUsage ?? profile.dataUsage;
+    profile.isEmailVerified = dto.isEmailVerified ?? profile.isEmailVerified;
+    profile.isActive = dto.isActive ?? profile.isActive;
+    profile.updated_at = new Date().toISOString();
 
     await profileRepo.save(profile);
     logMessage('info', `Profile updated for user_id: ${userId}`);
@@ -153,7 +198,7 @@ router.delete('/:userId', authMiddleware, async (req: Request, res: Response): P
       return res.status(403).json({ message: 'Forbidden: You can only delete your own profile' });
     }
 
-    const profile = await profileRepo.findOneBy({ user_id: userId });
+    const profile = await profileRepo.findOne({ where: { id: userId } });
     if (!profile) {
       logMessage('info', `Profile not found for user_id: ${userId}`);
       return res.status(404).json({ message: 'Profile not found' });

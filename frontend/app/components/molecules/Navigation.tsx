@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation';
 import { formatHeader } from '../../utils/stringUtils';
 import Logout from '../atoms/Logout';
 
-const routes = ["portfolio", "market", "profile"];
+const routes = ["portfolio", "market", "profile", "sandbox"];
 
 const Navigation = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) => {
   const router = useRouter();

@@ -2,12 +2,15 @@
 "use client";
 import React, { createContext, useState, useEffect, ReactNode } from "react";
 import axios from "axios";
+import { useRouter } from "next/navigation";
+
+type SignIn = { email: string, password: string };
 
 interface AuthContextType {
   token: string | null;
   user: User | null;
-  login: (email: string, password: string) => Promise<void>;
-  register: (email: string, password: string) => Promise<void>;
+  login: (props: SignIn) => Promise<void>;
+  register: (props: SignIn) => Promise<void>;
   logout: () => void;
   validToken: () => Promise<boolean>;
   authLoading: boolean;
@@ -54,6 +57,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [authLoading, setAuthLoading] = useState(true);
   const [apiBaseUrl, setApiBaseUrl] = useState<string>("");
   const [user, setUser] = useState<User | null>(null);
+  const router = useRouter();
 
   useEffect(() => {
     (async () => {
@@ -62,10 +66,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       validateTokenOnInit(resolvedBaseUrl);
     })();
   }, []);
-
-  useEffect(() => {
-    console.log("[USER] : ", user);
-  }, [user]);
 
   const validateTokenOnInit = async (baseUrl: string) => {
     if (typeof window === "undefined") return;
@@ -109,7 +109,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  const login = async (email: string, password: string) => {
+  const login = async (props: SignIn) => {
+    const { email, password } = props;
     try {
       const res = await axios.post(`${apiBaseUrl}/users/login`, { email, password });
       const { token, user } = res.data;
@@ -124,15 +125,19 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       setToken(token);
       setUser(user);
       axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+      if (user !== null) {
+        router.push('/')
+      }
     } catch (err: any) {
       throw new Error(err.response?.data?.message || "Login failed");
     }
   };
 
-  const register = async (email: string, password: string) => {
+  const register = async (props: SignIn) => {
+    const { email, password } = props;
     try {
       await axios.post(`${apiBaseUrl}/users/register`, { email, password });
-      await login(email, password);
+      await login(props);
     } catch (err: any) {
       throw new Error(err.response?.data?.message || 'Registration failed');
     }

@@ -10,9 +10,6 @@ import { WatchlistTicker } from './entities/Investor-Entities/WatchlistTicker';
 import { Investment } from './entities/Investor-Entities/Investment';
 import { Exerciser } from './entities/Exerciser-Entities/Exerciser';
 import { Workout } from './entities/Exerciser-Entities/Workout';
-import { CreateExerciserTables1729516800001 } from "./scripts/CreateExerciserTables";
-import { CreateInvestmentTables1729516800000 } from "./scripts/CreateInvestmentTables";
-import { UpdateUserTable1729516800002 } from "./scripts/UpdateUserTable";
 
 dotenv.config();
 
