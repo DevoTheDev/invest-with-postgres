@@ -159,14 +159,7 @@ router.delete('/me', authMiddleware, async (req: Request, res: Response): Promis
       return;
     }
 
-    // Delete associated profile
-    const profile = await profileRepository.findOne({ where: { user_id: userId } });
-    if (profile) {
-      await profileRepository.remove(profile);
-      logMessage('info', `Profile deleted for user_id: ${userId}`);
-    }
-
-    // Delete user
+    // Profile will be deleted automatically via CASCADE
     await userRepository.remove(user);
     logMessage('info', `User deleted: ${userId}`);
 

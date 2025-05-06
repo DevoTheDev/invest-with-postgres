@@ -8,6 +8,9 @@
     "esModuleInterop": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
+    "paths": {
+      "@shared/*": ["../../shared/*"]
+    }
   },
-  "include": ["src/**/*"]
+  "include": ["src/**/*", "../../shared"]
 }
