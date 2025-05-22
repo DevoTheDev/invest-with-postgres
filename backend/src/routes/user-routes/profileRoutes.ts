@@ -47,169 +47,198 @@ class ProfileDTO {
   @IsObject()
   @IsOptional()
   dataUsage?: { backgroundSync: boolean; activityLogs: boolean };
-
-  @IsBoolean()
-  @IsOptional()
-  isEmailVerified?: boolean;
-
-  @IsBoolean()
-  @IsOptional()
-  isActive?: boolean;
 }
 
 const router = Router();
 const profileRepo: Repository<Profile> = AppDataSource.getRepository(Profile);
 
-// POST /api/profiles
-router.post('/', authMiddleware, async (req: Request, res: Response): Promise<any> => {
+// Create Profile
+router.post('/', authMiddleware, async (req: Request, res: Response): Promise<void> => {
   try {
-    const userId = req.user?._id;
+    const userId = req.user?.id;
     if (!userId) {
-      logMessage('error', 'Invalid user ID');
-      return res.status(400).json({ message: 'Invalid user ID' });
+      logMessage('error', 'Unauthorized access to create profile');
+      res.status(401).json({ message: 'Unauthorized' });
+      return;
     }
 
-    const existingProfile = await profileRepo.findOne({ where: { id: userId } });
-    if (existingProfile) {
-      logMessage('error', `Profile already exists for user_id: ${userId}`);
-      return res.status(400).json({ message: 'Profile already exists for this user' });
-    }
-
+    // Convert request body to DTO and validate it
     const dto = plainToClass(ProfileDTO, req.body);
     const errors = await validate(dto);
     if (errors.length > 0) {
       logMessage('error', 'Validation failed for profile creation');
-      return res.status(400).json({ message: 'Validation failed', errors });
+      res.status(400).json({ message: 'Validation failed', data: { errors } });
+      return;
     }
 
-    const profile = new Profile();
-    profile.id = userId;
-    profile.name = dto.name ?? '';
-    profile.email = dto.email ?? '';
-    profile.username = dto.username ?? '';
-    profile.bio = dto.bio ?? undefined;
-    profile.avatarUrl = dto.avatarUrl ?? undefined;
-    profile.themePreference = dto.themePreference ?? ThemePreference.System;
-    profile.language = dto.language ?? LanguageOption.En;
-    profile.notifications = dto.notifications ?? { email: true, push: true };
-    profile.dataUsage = dto.dataUsage ?? { backgroundSync: false, activityLogs: false };
-    profile.isEmailVerified = dto.isEmailVerified ?? false;
-    profile.isActive = dto.isActive ?? true;
-    profile.created_at = new Date().toISOString();
-    profile.updated_at = new Date().toISOString();
+    // Check if email or username already exists
+    const existingProfile = await profileRepo.findOne({ where: [{ email: dto.email }, { username: dto.username }] });
+    if (existingProfile) {
+      logMessage('error', 'Profile with given email or username already exists');
+      res.status(400).json({ message: 'Profile with given email or username already exists' });
+      return;
+    }
 
-    await profileRepo.save(profile);
+    // Create new profile, applying defaults when dto fields are missing
+    const newProfile = profileRepo.create({
+      id: userId,
+      name: dto.name ?? "",                          // default empty string
+      email: dto.email ?? "",                        // default empty string
+      username: dto.username ?? "",                  // default empty string
+      bio: dto.bio ?? "",                            // default empty string
+      avatarUrl: dto.avatarUrl ?? "",                // default empty string
+      themePreference: dto.themePreference ?? ThemePreference.System,  // default to 'system'
+      language: dto.language ?? LanguageOption.En,   // default to 'en'
+      notifications: dto.notifications ?? { email: false, push: false }, // default notifications off
+      dataUsage: dto.dataUsage ?? { backgroundSync: false, activityLogs: false }, // default data usage off
+      isActive: true,                                // active by default
+      isEmailVerified: false,                        // not verified by default
+      created_at: new Date(),                        // set creation date
+      updated_at: new Date(),                        // set update date
+    });
+
+    const savedProfile = await profileRepo.save(newProfile);
     logMessage('info', `Profile created for user_id: ${userId}`);
-    return res.status(201).json({ message: 'Profile created', profile });
+    res.status(201).json({ message: 'Profile created', data: { profile: savedProfile } });
   } catch (error: any) {
     logMessage('error', `Error creating profile: ${error.message}`, { stack: error.stack });
-    return res.status(500).json({ message: 'Internal server error' });
+    res.status(500).json({ message: 'Internal server error' });
   }
 });
 
-// GET /api/profiles/:userId
-router.get('/:userId', authMiddleware, async (req: Request, res: Response): Promise<any> => {
+
+
+// Get Profile
+router.get('/:userId', authMiddleware, async (req: Request, res: Response): Promise<void> => {
   try {
     const userId = req.params.userId;
-    if (!userId || typeof userId !== 'string') {
-      logMessage('error', 'Invalid user ID format');
-      return res.status(400).json({ message: 'Invalid user ID' });
+    if (!userId || !userId.match(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i)) {
+      logMessage('error', 'Invalid UUID format');
+      res.status(400).json({ message: 'Invalid user ID format' });
+      return;
     }
 
-    if (req.user?._id !== userId) {
+    if (req.user?.id !== userId) {
       logMessage('error', `Unauthorized access to profile for user_id: ${userId}`);
-      return res.status(403).json({ message: 'Unauthorized' });
+      res.status(403).json({ message: 'Unauthorized' });
+      return;
     }
 
     const profile = await profileRepo.findOne({ where: { id: userId } });
     if (!profile) {
       logMessage('info', `Profile not found for user_id: ${userId}`);
-      return res.status(404).json({ message: 'Profile not found' });
+      res.status(404).json({ message: 'Profile not found' });
+      return;
     }
 
     logMessage('info', `Profile retrieved for user_id: ${userId}`);
-    return res.status(200).json({ message: 'Profile retrieved', profile });
+    res.status(200).json({ message: 'Profile retrieved', data: { profile } });
   } catch (error: any) {
     logMessage('error', `Error retrieving profile: ${error.message}`, { stack: error.stack });
-    return res.status(500).json({ message: 'Internal server error' });
+    res.status(500).json({ message: 'Internal server error' });
   }
 });
 
-// PUT /api/profiles/:userId
-router.put('/:userId', authMiddleware, async (req: Request, res: Response): Promise<any> => {
+// Update Profile
+router.put('/:userId', authMiddleware, async (req: Request, res: Response): Promise<void> => {
   try {
     const userId = req.params.userId;
-    if (!userId || typeof userId !== 'string') {
-      logMessage('error', 'Invalid user ID format');
-      return res.status(400).json({ message: 'Invalid user ID' });
+    if (!userId || !userId.match(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i)) {
+      logMessage('error', 'Invalid UUID format');
+      res.status(400).json({ message: 'Invalid user ID format' });
+      return;
     }
 
-    if (userId !== req.user?._id) {
+    if (userId !== req.user?.id) {
       logMessage('error', `Forbidden: Attempt to update profile for user_id: ${userId}`);
-      return res.status(403).json({ message: 'Forbidden: You can only update your own profile' });
+      res.status(403).json({ message: 'Forbidden: You can only update your own profile' });
+      return;
     }
 
     const profile = await profileRepo.findOne({ where: { id: userId } });
     if (!profile) {
       logMessage('info', `Profile not found for user_id: ${userId}`);
-      return res.status(404).json({ message: 'Profile not found' });
+      res.status(404).json({ message: 'Profile not found' });
+      return;
     }
 
     const dto = plainToClass(ProfileDTO, req.body);
     const errors = await validate(dto);
     if (errors.length > 0) {
       logMessage('error', 'Validation failed for profile update');
-      return res.status(400).json({ message: 'Validation failed', errors });
+      res.status(400).json({ message: 'Validation failed', data: { errors } });
+      return;
     }
 
-    profile.name = dto.name ?? profile.name;
-    profile.email = dto.email ?? profile.email;
-    profile.username = dto.username ?? profile.username;
-    profile.bio = dto.bio ?? profile.bio;
-    profile.avatarUrl = dto.avatarUrl ?? profile.avatarUrl;
-    profile.themePreference = dto.themePreference ?? profile.themePreference;
-    profile.language = dto.language ?? profile.language;
-    profile.notifications = dto.notifications ?? profile.notifications;
-    profile.dataUsage = dto.dataUsage ?? profile.dataUsage;
-    profile.isEmailVerified = dto.isEmailVerified ?? profile.isEmailVerified;
-    profile.isActive = dto.isActive ?? profile.isActive;
-    profile.updated_at = new Date().toISOString();
+    if (dto.username && dto.username !== profile.username) {
+      const existingUsername = await profileRepo.findOne({ where: { username: dto.username } });
+      if (existingUsername) {
+        logMessage('error', `Username ${dto.username} already taken`);
+        res.status(400).json({ message: 'Username already taken' });
+        return;
+      }
+    }
 
-    await profileRepo.save(profile);
+    if (dto.email && dto.email !== profile.email) {
+      const existingEmail = await profileRepo.findOne({ where: { email: dto.email } });
+      if (existingEmail) {
+        logMessage('error', `Email ${dto.email} already taken`);
+        res.status(400).json({ message: 'Email already taken' });
+        return;
+      }
+    }
+
+    profileRepo.merge(profile, {
+      name: dto.name ?? profile.name,
+      email: dto.email ?? profile.email,
+      username: dto.username ?? profile.username,
+      bio: dto.bio ?? profile.bio,
+      avatarUrl: dto.avatarUrl ?? profile.avatarUrl,
+      themePreference: dto.themePreference ?? profile.themePreference,
+      language: dto.language ?? profile.language,
+      notifications: dto.notifications ?? profile.notifications,
+      dataUsage: dto.dataUsage ?? profile.dataUsage,
+    });
+
+    const updatedProfile = await profileRepo.save(profile);
     logMessage('info', `Profile updated for user_id: ${userId}`);
-    return res.status(200).json({ message: 'Profile updated', profile });
+    res.status(200).json({ message: 'Profile updated', data: { profile: updatedProfile } });
   } catch (error: any) {
     logMessage('error', `Error updating profile: ${error.message}`, { stack: error.stack });
-    return res.status(500).json({ message: 'Internal server error' });
+    res.status(500).json({ message: 'Internal server error' });
   }
 });
 
-// DELETE /api/profiles/:userId
-router.delete('/:userId', authMiddleware, async (req: Request, res: Response): Promise<any> => {
+// Deactivate Profile (Soft Delete)
+router.delete('/:userId', authMiddleware, async (req: Request, res: Response): Promise<void> => {
   try {
     const userId = req.params.userId;
-    if (!userId || typeof userId !== 'string') {
-      logMessage('error', 'Invalid user ID format');
-      return res.status(400).json({ message: 'Invalid user ID' });
+    if (!userId || !userId.match(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i)) {
+      logMessage('error', 'Invalid UUID format');
+      res.status(400).json({ message: 'Invalid user ID format' });
+      return;
     }
 
-    if (userId !== req.user?._id) {
-      logMessage('error', `Forbidden: Attempt to delete profile for user_id: ${userId}`);
-      return res.status(403).json({ message: 'Forbidden: You can only delete your own profile' });
+    if (userId !== req.user?.id) {
+      logMessage('error', `Forbidden: Attempt to deactivate profile for user_id: ${userId}`);
+      res.status(403).json({ message: 'Forbidden: You can only deactivate your own profile' });
+      return;
     }
 
     const profile = await profileRepo.findOne({ where: { id: userId } });
     if (!profile) {
       logMessage('info', `Profile not found for user_id: ${userId}`);
-      return res.status(404).json({ message: 'Profile not found' });
+      res.status(404).json({ message: 'Profile not found' });
+      return;
     }
 
-    await profileRepo.remove(profile);
-    logMessage('info', `Profile deleted for user_id: ${userId}`);
-    return res.status(200).json({ message: 'Profile deleted' });
+    profile.isActive = false;
+    await profileRepo.save(profile);
+    logMessage('info', `Profile deactivated for user_id: ${userId}`);
+    res.status(200).json({ message: 'Profile deactivated' });
   } catch (error: any) {
-    logMessage('error', `Error deleting profile: ${error.message}`, { stack: error.stack });
-    return res.status(500).json({ message: 'Internal server error' });
+    logMessage('error', `Error deactivating profile: ${error.message}`, { stack: error.stack });
+    res.status(500).json({ message: 'Internal server error' });
   }
 });
 

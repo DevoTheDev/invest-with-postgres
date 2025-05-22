@@ -2,7 +2,7 @@
 import React, { useContext, useState } from "react";
 import TopGainersAndLosers from "./TopGainersAndLosers";
 import { stocks } from "@/app/defaults/companies/top200";
-import { useUser } from "@/app/hooks/useUser";
+import { useUser } from "@/app/hooks/useProfile";
 import StockLabel from "../atoms/StockLabel";
 import formatStockMovements from "@/app/utils/marketUtils";
 

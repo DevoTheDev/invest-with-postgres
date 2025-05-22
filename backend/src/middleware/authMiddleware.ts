@@ -22,7 +22,7 @@ export async function authMiddleware(req: Request, res: Response, next: NextFunc
 
   try {
     const decoded = jwt.verify(token, JWT_SECRET) as { userId: string; email: string };
-    const user = await userRepository.findOne({ where: { _id: decoded.userId } });
+    const user = await userRepository.findOne({ where: { id: decoded.userId } });
 
     if (!user) {
       logMessage('error', `User not found for userId: ${decoded.userId}`);

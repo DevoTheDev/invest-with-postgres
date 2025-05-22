@@ -29,6 +29,6 @@ export interface UserProfile {
   };
   isEmailVerified: boolean;
   isActive: boolean;
-  created_at: string;
-  updated_at: string;
+  created_at: any;
+  updated_at: any;
 }

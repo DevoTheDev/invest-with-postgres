@@ -1,151 +1,128 @@
-"use client";
-import React, { useState, useContext } from "react";
-import { useAuth } from "@/app/hooks/useAuth";
-import { useForm, SubmitHandler } from "react-hook-form";
-import { useRouter } from "next/navigation";
+'use client';
+import React, { useState } from 'react';
+import { useForm, SubmitHandler } from 'react-hook-form';
+import { useRouter } from 'next/navigation';
+import { useAuth } from '@/app/hooks/useAuth';
 
 type SignInForm = {
   email: string;
   password: string;
 };
 
+const AUTH_TEXT = {
+  login: {
+    title: 'Welcome Back',
+    subtitle: 'Sign in to explore',
+    button: 'Sign In',
+    switchPrompt: 'New here?',
+    switchAction: 'Create an account',
+  },
+  register: {
+    title: 'Join Us',
+    subtitle: 'Create your account',
+    button: 'Register',
+    switchPrompt: 'Already have an account?',
+    switchAction: 'Sign in',
+  },
+};
+
 export default function SignInPage() {
-  const { login, authLoading } = useAuth();
-  const [error, setError] = useState<string | null>(null);
+  const { register: createAccount, login, authLoading, error } = useAuth();
+  const [signInType, setSignInType] = useState<'login' | 'register'>('login');
   const router = useRouter();
-  
+
   const {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
   } = useForm<SignInForm>({
     defaultValues: {
-      email: "",
-      password: "",
+      email: '',
+      password: '',
     },
   });
 
   const onSubmit: SubmitHandler<SignInForm> = async (data) => {
     try {
-      setError(null);
-      await login(data);
-      router.push("/");
+      if (signInType === 'login') await login(data);
+      if (signInType === 'register') await createAccount(data);
+      router.push('/');
     } catch (err: any) {
-      setError(err.message || "Failed to sign in. Please try again.");
+      throw new Error(err || 'Something went wrong. Please try again.');
     }
   };
 
+  const t = AUTH_TEXT[signInType];
+
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-800 py-16 px-4 sm:px-8 lg:px-12">
-      <div className="max-w-lg w-full space-y-10 bg-gray-900/80 backdrop-blur-sm p-8 rounded-3xl shadow-xl transform -rotate-1">
-        <div className="text-center">
-          <h2 className="text-4xl font-bold text-cyan-300 tracking-wide">
-            Welcome Back
-          </h2>
-          <p className="mt-2 text-gray-400 text-lg">Sign in to explore</p>
+    <div className="min-h-screen bg-gray-700 flex items-center justify-center px-8 py-16">
+      <div className="w-full max-w-7xl bg-gradient-to-r from-gray-600 via-gray-500 to-gray-600 rounded-xl shadow-md p-8 space-y-8">
+        <div className="text-center space-y-2">
+          <h1 className="text-3xl font-extrabold text-white tracking-tight">{t.title}</h1>
+          <p className="text-sm font-light text-gray-100">{t.subtitle}</p>
         </div>
-        
-        <form className="mt-10 space-y-8" onSubmit={handleSubmit(onSubmit)}>
-          <div className="space-y-6">
-            <div className="relative">
-              <label htmlFor="email" className="sr-only">
-                Email address
-              </label>
+
+        {error && (
+          <div className="bg-red-500/10 text-red-300 p-3 rounded-md text-sm text-center">
+            {error.message}
+          </div>
+        )}
+
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+          <div className="space-y-6 max-w-md mx-auto">
+            <div>
+              <label className="block text-sm font-light text-gray-100">Email</label>
               <input
-                id="email"
                 type="email"
-                {...register("email", {
-                  required: "Email is required",
+                {...register('email', {
+                  required: 'Email is required',
                   pattern: {
                     value: /\S+@\S+\.\S+/,
-                    message: "Invalid email address",
+                    message: 'Invalid email address',
                   },
                 })}
-                className="w-full px-5 py-4 bg-gray-700/50 border border-gray-600 text-gray-100 placeholder-gray-400 rounded-2xl focus:outline-none focus:ring-4 focus:ring-cyan-500/50 focus:border-cyan-400 transition-all duration-300 text-lg"
-                placeholder="Your email"
+                className="mt-1 w-full p-2 bg-transparent border-b border-gray-300 text-white focus:border-cyan-300 outline-none transition-colors duration-200 placeholder:text-gray-300"
+                placeholder="Enter email"
               />
               {errors.email && (
-                <p className="mt-2 text-sm text-red-400 absolute -bottom-6 left-2">
-                  {errors.email.message}
-                </p>
+                <p className="text-red-300 text-xs mt-1">{errors.email.message}</p>
               )}
             </div>
-            
-            <div className="relative">
-              <label htmlFor="password" className="sr-only">
-                Password
-              </label>
+
+            <div>
+              <label className="block text-sm font-light text-gray-100">Password</label>
               <input
-                id="password"
                 type="password"
-                {...register("password", {
-                  required: "Password is required",
-                  // minLength: {
-                  //   value: 6,
-                  //   message: "Password must be at least 6 characters",
-                  // },
-                })}
-                className="w-full px-5 py-4 bg-gray-700/50 border border-gray-600 text-gray-100 placeholder-gray-400 rounded-2xl focus:outline-none focus:ring-4 focus:ring-cyan-500/50 focus:border-cyan-400 transition-all duration-300 text-lg"
-                placeholder="Your password"
+                {...register('password', { required: 'Password is required' })}
+                className="mt-1 w-full p-2 bg-transparent border-b border-gray-300 text-white focus:border-cyan-300 outline-none transition-colors duration-200 placeholder:text-gray-300"
+                placeholder="Enter password"
               />
               {errors.password && (
-                <p className="mt-2 text-sm text-red-400 absolute -bottom-6 left-2">
-                  {errors.password.message}
-                </p>
+                <p className="text-red-300 text-xs mt-1">{errors.password.message}</p>
               )}
             </div>
-          </div>
 
-          {error && (
-            <div className="text-sm text-red-400 text-center bg-gray-700/30 py-2 px-4 rounded-xl">
-              {error}
-            </div>
-          )}
-
-          <div className="flex justify-end">
             <button
               type="submit"
               disabled={isSubmitting || authLoading}
-              className="relative flex items-center justify-center px-8 py-3 bg-cyan-500 text-gray-900 text-lg font-semibold rounded-xl hover:bg-cyan-400 focus:outline-none focus:ring-4 focus:ring-cyan-300/50 disabled:bg-gray-600 disabled:text-gray-400 disabled:cursor-not-allowed transition-all duration-300 transform hover:scale-105"
+              className="w-full bg-cyan-300 text-gray-900 py-2 rounded-lg font-semibold hover:bg-cyan-400 disabled:bg-gray-300 transition-colors duration-200"
+              aria-disabled={isSubmitting || authLoading}
             >
-              {isSubmitting || authLoading ? (
-                <span className="absolute left-3 flex items-center">
-                  <svg
-                    className="animate-spin h-5 w-5 text-gray-900"
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                  >
-                    <circle
-                      className="opacity-25"
-                      cx="12"
-                      cy="12"
-                      r="10"
-                      stroke="currentColor"
-                      strokeWidth="4"
-                    ></circle>
-                    <path
-                      className="opacity-75"
-                      fill="currentColor"
-                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                    ></path>
-                  </svg>
-                </span>
-              ) : null}
-              Sign In
+              {isSubmitting || authLoading ? 'Loading...' : t.button}
             </button>
           </div>
         </form>
 
         <div className="text-center">
-          <p className="text-gray-400 text-lg">
-            New here?{" "}
-            <a
-              href="/signup"
-              className="font-semibold text-cyan-400 hover:text-cyan-300 transition-colors duration-200"
+          <p className="text-sm font-light text-gray-100">
+            {t.switchPrompt}{' '}
+            <button
+              onClick={() => setSignInType((prev) => (prev === 'login' ? 'register' : 'login'))}
+              className="text-cyan-300 hover:text-cyan-400 font-semibold transition-colors duration-200"
+              aria-label={`Switch to ${t.switchAction.toLowerCase()}`}
             >
-              Create an account
-            </a>
+              {t.switchAction}
+            </button>
           </p>
         </div>
       </div>

@@ -1,55 +1,65 @@
-import { Entity, Column, PrimaryColumn, OneToOne, JoinColumn } from 'typeorm';
-import { User } from './User';
-import { UserProfile, ThemePreference, LanguageOption } from '../types/shared/shared-types';
+import {
+  Entity,
+  Column,
+  PrimaryColumn,
+  OneToOne,
+  JoinColumn,
+  Index,
+  CreateDateColumn,
+  UpdateDateColumn,
+  PrimaryGeneratedColumn
+} from "typeorm";
+import { User } from "./User";
+import { UserProfile, ThemePreference, LanguageOption } from "../types/shared/shared-types";
 
-@Entity('profiles')
+@Entity("profiles") // plural
 export class Profile implements UserProfile {
-  @PrimaryColumn({ name: 'id', type: 'varchar' })
-  id: string = '';
+  @PrimaryGeneratedColumn("uuid")
+  id!: string;
 
-  @Column({ type: 'varchar', length: 100 })
-  name: string = '';
+  @Column({ type: "varchar", length: 100 })
+  name: string = "";
 
-  @Column({ type: 'varchar', length: 255 })
-  email: string = '';
+  @Column({ type: "varchar", length: 255 })
+  email: string = "";
 
-  @Column({ type: 'varchar', length: 50, unique: true })
-  username: string = '';
+  @Column({ type: "varchar", length: 50, unique: true })
+  username: string = "";
 
-  @Column({ type: 'text', nullable: true })
+  @Column({ type: "text", nullable: true })
   bio?: string;
 
-  @Column({ type: 'varchar', length: 255, nullable: true })
+  @Column({ type: "varchar", length: 255, nullable: true })
   avatarUrl?: string;
 
-  @Column({ type: 'varchar', length: 20, default: ThemePreference.System })
+  @Column({ type: "varchar", length: 20, default: ThemePreference.System })
   themePreference: ThemePreference = ThemePreference.System;
 
-  @Column({ type: 'varchar', length: 10, default: LanguageOption.En })
+  @Column({ type: "varchar", length: 10, default: LanguageOption.En })
   language: LanguageOption = LanguageOption.En;
 
-  @Column({ type: 'jsonb', default: () => "'{\"email\": true, \"push\": true}'" })
+  @Column({ type: "jsonb", default: () => "'{\"email\": true, \"push\": true}'" })
   notifications: { email: boolean; push: boolean } = { email: true, push: true };
 
-  @Column({ type: 'jsonb', default: () => "'{\"backgroundSync\": false, \"activityLogs\": false}'" })
+  @Column({ type: "jsonb", default: () => "'{\"backgroundSync\": false, \"activityLogs\": false}'" })
   dataUsage: { backgroundSync: boolean; activityLogs: boolean } = {
     backgroundSync: false,
     activityLogs: false,
   };
 
-  @Column({ type: 'boolean', default: false })
+  @Column({ type: "boolean", default: false })
   isEmailVerified: boolean = false;
 
-  @Column({ type: 'boolean', default: true })
+  @Column({ type: "boolean", default: true })
   isActive: boolean = true;
 
-  @Column({ type: 'varchar', default: () => "'1970-01-01T00:00:00.000Z'" })
-  created_at: string = new Date().toISOString();
+  @CreateDateColumn()
+  created_at!: Date;
 
-  @Column({ type: 'varchar', default: () => "'1970-01-01T00:00:00.000Z'", onUpdate: "CURRENT_TIMESTAMP" })
-  updated_at: string = new Date().toISOString();
+  @UpdateDateColumn()
+  updated_at!: Date;
 
-  @OneToOne(() => User, { nullable: false, onDelete: 'CASCADE' })
-  @JoinColumn({ name: 'id', referencedColumnName: '_id' })
+  @OneToOne(() => User, (user) => user.profile, { onDelete: "CASCADE" })
+  @JoinColumn({ name: "id", referencedColumnName: "id" }) // PK join
   user!: User;
 }
