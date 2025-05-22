@@ -1,5 +1,5 @@
 "use client";
-import { useUser } from "@/app/hooks/useUser";
+import { useUser } from "@/app/hooks/useProfile";
 
 const WalletInfo = () => {
   const { profile } = useUser();

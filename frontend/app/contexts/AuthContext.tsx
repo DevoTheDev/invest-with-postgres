@@ -1,146 +1,88 @@
 // src/context/AuthContext.tsx
 "use client";
 import React, { createContext, useState, useEffect, ReactNode } from "react";
-import axios from "axios";
 import { useRouter } from "next/navigation";
+import axios from "axios";
+import * as AuthController from "@/app/controllers/AuthController";
 
-type SignIn = { email: string, password: string };
+type SignIn = { email: string; password: string };
+type User = { id: string; email: string };
 
 interface AuthContextType {
   token: string | null;
   user: User | null;
-  login: (props: SignIn) => Promise<void>;
+  login: (props: SignIn) => Promise<{
+    token: string;
+    user: User;
+}>;
   register: (props: SignIn) => Promise<void>;
   logout: () => void;
+  deleteUser: () => Promise<void>;
+  updateUser: (props: { email?: string; password?: string }) => Promise<void>;
   validToken: () => Promise<boolean>;
   authLoading: boolean;
   apiBaseUrl: string;
+  error: string | null;
 }
 
-type User = {
-  _id: number | string;
-  email: string;
-};
-
 export const AuthContext = createContext<AuthContextType>({} as AuthContextType);
-
-// Candidate ports to test
-const PORTS = [4004, 3001];
-const BASE_PATH = "/api";
-
-let dynamicBaseURL = "";
-
-const testApiConnection = async () => {
-  for (const port of PORTS) {
-    const url = `http://localhost:${port}${BASE_PATH}/ping`;
-    try {
-      const response = await axios.get(url);
-      if (response.status === 200) {
-        dynamicBaseURL = `http://localhost:${port}${BASE_PATH}`;
-        break;
-      }
-    } catch (err) {
-      // silently skip failed attempts
-    }
-  }
-
-  if (!dynamicBaseURL) {
-    console.error("❌ Failed to connect to any backend API.");
-    dynamicBaseURL = `http://localhost:${PORTS[PORTS.length - 1]}${BASE_PATH}`;
-  }
-
-  return dynamicBaseURL;
-};
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [token, setToken] = useState<string | null>(null);
   const [authLoading, setAuthLoading] = useState(true);
   const [apiBaseUrl, setApiBaseUrl] = useState<string>("");
   const [user, setUser] = useState<User | null>(null);
+  const [error, setError] = useState<string | null>(null);
   const router = useRouter();
 
   useEffect(() => {
     (async () => {
-      const resolvedBaseUrl = await testApiConnection();
+      const resolvedBaseUrl = await AuthController.testApiConnection();
       setApiBaseUrl(resolvedBaseUrl);
-      validateTokenOnInit(resolvedBaseUrl);
+      await AuthController.validateTokenOnInit();
+      setAuthLoading(false);
     })();
   }, []);
 
-  const validateTokenOnInit = async (baseUrl: string) => {
-    if (typeof window === "undefined") return;
-
-    const savedToken = localStorage.getItem("token");
-    if (!savedToken) {
-      setAuthLoading(false);
-      return;
-    }
-
-    axios.defaults.headers.common["Authorization"] = `Bearer ${savedToken}`;
-
-    const isValid = await validToken(baseUrl);
-    if (isValid) {
-      setToken(savedToken);
-    } else {
-      logout();
-    }
-
-    setAuthLoading(false);
-  };
-
-  const validToken = async (baseUrl: string = apiBaseUrl): Promise<boolean> => {
-    try {
-      const response = await axios.post(`${baseUrl}/users/refresh`);
-      const { token, user } = response.data;
-      if (response.status === 200) {
-        if (typeof window !== "undefined") {
-          localStorage.setItem("token", token);
-        }
-        setToken(token);
-        setUser(user);
-        axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
-        return true;
-      }
-      return false;
-    } catch (error) {
-      console.warn("Token validation failed:", error);
-      logout();
-      return false;
-    }
-  };
-
   const login = async (props: SignIn) => {
-    const { email, password } = props;
-    try {
-      const res = await axios.post(`${apiBaseUrl}/users/login`, { email, password });
-      const { token, user } = res.data;
-      if (!user) {
-        throw new Error("Error receiving user on login.");
-      }
-
-      if (typeof window !== "undefined") {
-        localStorage.setItem("token", token);
-      }
-
-      setToken(token);
-      setUser(user);
-      axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
-      if (user !== null) {
-        router.push('/')
-      }
-    } catch (err: any) {
-      throw new Error(err.response?.data?.message || "Login failed");
-    }
+    const res = await AuthController.login(props);
+    setToken(res.token);
+    localStorage.setItem("token", res.token);
+    setUser(res.user);
+    router.push("/");
+    return res;
   };
 
   const register = async (props: SignIn) => {
-    const { email, password } = props;
     try {
-      await axios.post(`${apiBaseUrl}/users/register`, { email, password });
+      setError(null);
+      await AuthController.register(props);
       await login(props);
     } catch (err: any) {
-      throw new Error(err.response?.data?.message || 'Registration failed');
+      const errorMessage = err.response?.data?.message || "Registration failed";
+      setError(errorMessage);
+      throw new Error(errorMessage);
     }
+  };
+
+  const updateUser = async (props: { email?: string; password?: string }) => {
+    if (!token || !apiBaseUrl || !user?.id) {
+      setError("Missing token or user ID");
+      throw new Error("Missing token or user ID");
+    }
+
+    try {
+      setError(null);
+      await AuthController.updateUser(props, token);
+    } catch (err: any) {
+      const errorMessage = err.response?.data?.message || "Failed to update user";
+      setError(errorMessage);
+      throw new Error(errorMessage);
+    }
+  };
+
+  const validToken = async (): Promise<boolean> => {
+    return await AuthController.validToken(token || "");
   };
 
   const logout = () => {
@@ -150,10 +92,65 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     delete axios.defaults.headers.common["Authorization"];
     setUser(null);
     setToken(null);
+    setError(null);
+    router.push("/pages/sign-in");
   };
 
+  const deleteUser = async () => {
+    if (!token || !apiBaseUrl || !user?.id) {
+      setError("Missing token or user ID");
+      throw new Error("Missing token or user ID");
+    }
+
+    try {
+      setAuthLoading(true);
+      setError(null);
+      await AuthController.deleteUser(user.id);
+      router.push("/pages/sign-in");
+    } finally {
+      setAuthLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    const checkToken = async () => {
+      const savedToken = localStorage.getItem("token");
+  
+      if (!savedToken) {
+        router.push("/pages/sign-in");
+        return;
+      }
+  
+      const isValid = await AuthController.validToken(savedToken);
+  
+      if (!isValid) {
+        router.push("/pages/sign-in");
+      } else {
+        setToken(savedToken);
+      }
+    };
+  
+    checkToken();
+  }, []);
+  
+  
+
   return (
-    <AuthContext.Provider value={{ token, user, login, register, logout, validToken, authLoading, apiBaseUrl }}>
+    <AuthContext.Provider
+      value={{
+    token,
+    user,
+    login,
+    register,
+    logout,
+    updateUser,
+    validToken,
+    authLoading,
+    apiBaseUrl,
+    error,
+    deleteUser,
+  }}
+    >
       {children}
     </AuthContext.Provider>
   );

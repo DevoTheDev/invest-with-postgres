@@ -1,6 +1,6 @@
 "use client";
 import React from 'react'
-import { useUser } from '@/app/hooks/useUser';
+import { useUser } from '@/app/hooks/useProfile';
 
 type Props = {}
 

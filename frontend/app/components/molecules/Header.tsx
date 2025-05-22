@@ -1,24 +1,14 @@
 "use client";
 import React, { useState } from 'react';
 import Navigation from './Navigation';
-import { useUser } from '../../hooks/useUser';
+import { useProfile } from '../../hooks/useProfile';
 import { usePathname } from 'next/navigation';
-import { useRouter } from 'next/navigation';
-import { formatRoute } from '@/app/utils/stringUtils'
-import { useAuth } from '@/app/hooks/useAuth';
+import { formatRoute } from '@/app/utils/stringUtils';
 
 const Header = () => {
-  const { profile } = useUser();
-
+  const { profile } = useProfile();
   const [isSidebarOpen, setSidebarOpen] = useState(false);
-
   const pathname = usePathname();
-  const { user } = useAuth();
-
-  const handleUserLog = () => {
-    console.log("[ USER ] : ", user);
-    console.log("[ PROFILE ] : ", profile);
-  }
 
   return (
     <>
