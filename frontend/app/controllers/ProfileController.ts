@@ -1,57 +1,43 @@
-import axios, { AxiosError } from "axios";
-import { UserProfile } from "../types/UserProfile";
+import axios, { AxiosResponse } from "axios";
+import { LanguageOption, ThemePreference } from "../types/UserProfile";
+import { getAuthHeaders, extractErrorMessage } from "../utils/apiUtils";
 
-const extractErrorMessage = (error: unknown): string => {
-  if (axios.isAxiosError(error)) {
-    const axiosError = error as AxiosError<any>;
-    const status = axiosError.response?.status;
-    const serverMessage = axiosError.response?.data?.message;
-    return `(${status}) ${serverMessage || axiosError.message}`;
-  }
+export interface UserProfile {
+  id: string;
+  name: string;
+  email: string;
+  username?: string;
+  phone?: string;
+  bio?: string;
+  avatarUrl?: string;
+  themePreference?: ThemePreference;
+  language?: LanguageOption;
+  notifications?: { email: boolean; push: boolean };
+  dataUsage?: { backgroundSync: boolean; activityLogs: boolean };
+  isEmailVerified?: boolean;
+  isActive?: boolean;
+  created_at?: Date; 
+  updated_at?: Date;
+}
 
-  return (error as Error)?.message || "Unknown error occurred";
-};
-
-export const getProfile = async (userId: string): Promise<UserProfile> => {
+export const getProfile = async (): Promise<AxiosResponse<{ message: string, data: { profile: UserProfile } }>> => {
   try {
-    const response = await axios.get(`/profiles/${userId}`);
-    return response.data.data.profile as UserProfile;
+    const response = await axios.get('/profiles', { headers: getAuthHeaders() });
+    return response;
   } catch (error) {
     const message = extractErrorMessage(error);
     console.error("🔴 Get profile failed:", message);
-    throw new Error(`Failed to fetch profile: ${message}`);
+    throw new Error(`Failed to get profile: ${message}`);
   }
 };
 
-export const createProfile = async (dto: Partial<UserProfile>): Promise<UserProfile> => {
+export const updateProfile = async (dto: Partial<UserProfile>): Promise<AxiosResponse<{ message: string, data: { updatedProfile: UserProfile } }>> => {
   try {
-    const response = await axios.post(`/profiles`, dto);
-    return response.data.data.profile as UserProfile;
-  } catch (error) {
-    const message = extractErrorMessage(error);
-    console.error("🔴 Create profile failed:", message);
-    throw new Error(`Failed to create profile: ${message}`);
-  }
-};
-
-export const updateProfile = async (userId: string, dto: Partial<UserProfile>): Promise<UserProfile> => {
-  try {
-    const response = await axios.put(`/profiles/${userId}`, dto);
-    return response.data.data.profile as UserProfile;
+    const response = await axios.put('/profiles', dto, { headers: getAuthHeaders() });
+    return response;
   } catch (error) {
     const message = extractErrorMessage(error);
     console.error("🔴 Update profile failed:", message);
     throw new Error(`Failed to update profile: ${message}`);
   }
 };
-
-export const deactivateProfile = async (userId: string): Promise<void> => {
-  try {
-    await axios.delete(`/profiles/${userId}`);
-  } catch (error) {
-    const message = extractErrorMessage(error);
-    console.error("🔴 Deactivate profile failed:", message);
-    throw new Error(`Failed to deactivate profile: ${message}`);
-  }
-};
-

@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/app/hooks/useAuth';
+import Customs from '@/app/components/organisms/Customs';
 
 type SignInForm = {
   email: string;
@@ -55,23 +56,35 @@ export default function SignInPage() {
   const t = AUTH_TEXT[signInType];
 
   return (
-    <div className="min-h-screen bg-gray-700 flex items-center justify-center px-8 py-16">
-      <div className="w-full max-w-7xl bg-gradient-to-r from-gray-600 via-gray-500 to-gray-600 rounded-xl shadow-md p-8 space-y-8">
+    <div
+      style={{ backgroundImage: "url('/backgrounds/Warm-nebula-BG.png')" }}
+      className="min-h-screen flex items-center justify-center bg-cover bg-center relative">
+      {/* Blur Overlay */}
+      <div className="absolute inset-0 bg-black/60 backdrop-blur-lg z-0" />
+
+      {/* Auth Card */}
+      <div className="relative z-10 w-full max-w-md mx-auto p-8 rounded-3xl shadow-2xl bg-white/10 border border-white/20 backdrop-blur-2xl text-white space-y-8">
+        {/* Header */}
         <div className="text-center space-y-2">
-          <h1 className="text-3xl font-extrabold text-white tracking-tight">{t.title}</h1>
-          <p className="text-sm font-light text-gray-100">{t.subtitle}</p>
+          <Customs.Text colors={['#45fed5', '#646def']} textSize='text-4xl' >
+            {signInType === "login" ? "Welcome Back" : "Get Started"}
+          </Customs.Text>
+          <p className="text-sm text-white/70 font-light">{t.subtitle}</p>
         </div>
 
+
+        {/* Error */}
         {error && (
-          <div className="bg-red-500/10 text-red-300 p-3 rounded-md text-sm text-center">
-            {error.message}
+          <div className="bg-[#f93745]/20 text-[#f93745] p-3 rounded-md text-sm text-center border border-[#f93745]/40">
+            {error}
           </div>
         )}
 
+        {/* Form */}
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-          <div className="space-y-6 max-w-md mx-auto">
+          <div className="space-y-5 flex flex-col">
             <div>
-              <label className="block text-sm font-light text-gray-100">Email</label>
+              <label className="block text-sm text-white/80 mb-1">Email</label>
               <input
                 type="email"
                 {...register('email', {
@@ -81,45 +94,44 @@ export default function SignInPage() {
                     message: 'Invalid email address',
                   },
                 })}
-                className="mt-1 w-full p-2 bg-transparent border-b border-gray-300 text-white focus:border-cyan-300 outline-none transition-colors duration-200 placeholder:text-gray-300"
-                placeholder="Enter email"
+                className="w-full px-4 py-2 bg-white/10 border border-white/30 rounded-md text-white placeholder:text-white/50 focus:outline-none focus:ring-2 focus:ring-[#45fed5]"
+                placeholder="Enter email here"
               />
               {errors.email && (
-                <p className="text-red-300 text-xs mt-1">{errors.email.message}</p>
+                <p className="text-[#f93745] text-xs mt-1">{errors.email.message}</p>
               )}
             </div>
 
             <div>
-              <label className="block text-sm font-light text-gray-100">Password</label>
+              <label className="block text-sm text-white/80 mb-1">Password</label>
               <input
                 type="password"
                 {...register('password', { required: 'Password is required' })}
-                className="mt-1 w-full p-2 bg-transparent border-b border-gray-300 text-white focus:border-cyan-300 outline-none transition-colors duration-200 placeholder:text-gray-300"
-                placeholder="Enter password"
+                className="w-full px-4 py-2 bg-white/10 border border-white/30 rounded-md text-white placeholder:text-white/50 focus:outline-none focus:ring-2 focus:ring-[#45fed5]"
+                placeholder="Enter password here"
               />
               {errors.password && (
-                <p className="text-red-300 text-xs mt-1">{errors.password.message}</p>
+                <p className="text-[#f93745] text-xs mt-1">{errors.password.message}</p>
               )}
             </div>
-
-            <button
-              type="submit"
+            <Customs.Button
+              type='submit'
               disabled={isSubmitting || authLoading}
-              className="w-full bg-cyan-300 text-gray-900 py-2 rounded-lg font-semibold hover:bg-cyan-400 disabled:bg-gray-300 transition-colors duration-200"
-              aria-disabled={isSubmitting || authLoading}
+              colors={["#646def", "#f93745"]}
+              className='w-1/2 self-center'
             >
               {isSubmitting || authLoading ? 'Loading...' : t.button}
-            </button>
+            </Customs.Button>
           </div>
         </form>
 
+        {/* Switch */}
         <div className="text-center">
-          <p className="text-sm font-light text-gray-100">
+          <p className="text-sm text-white/70">
             {t.switchPrompt}{' '}
             <button
               onClick={() => setSignInType((prev) => (prev === 'login' ? 'register' : 'login'))}
-              className="text-cyan-300 hover:text-cyan-400 font-semibold transition-colors duration-200"
-              aria-label={`Switch to ${t.switchAction.toLowerCase()}`}
+              className="text-[#9de2ff] font-semibold hover:text-white underline underline-offset-2 transition"
             >
               {t.switchAction}
             </button>

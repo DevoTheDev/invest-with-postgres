@@ -14,7 +14,7 @@ export interface UserProfile {
   id: string;
   name: string;
   email: string;
-  username: string;
+  username?: string;
   bio?: string;
   avatarUrl?: string;
   themePreference: ThemePreference;

@@ -3,8 +3,8 @@
 "use client";
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import AlphaVantage from '../controllers/alphaVantageController';
+import { Ticker } from '../components/atoms/TickerLabel';
 
-export type Ticker = { ticker: string };
 export type Company = Ticker & {
   name: string;
   marketCap?: number;
@@ -25,11 +25,13 @@ export type Investment = Stock & {
   sharesOwned: number;
 };
 
+export type MarketTypes = Ticker | Company | Stock | Investment;
+
 type MarketContextType = {
-  selection: Stock | null;
+  selection: Partial<MarketTypes> | null;
   intradayData: any | null;
   intradayError: string | null;
-  select: (val: Stock) => void;
+  select: (val: Partial<MarketTypes>) => void;
   deselect: () => void;
   fetchIntraday: (symbol: string) => Promise<void>;
 };
@@ -37,13 +39,13 @@ type MarketContextType = {
 export const MarketContext = createContext<MarketContextType | undefined>(undefined);
 
 export const MarketProvider = ({ children }: { children: ReactNode }) => {
-  const [selection, setSelection] = useState<Stock | null>(null);
+  const [selection, setSelection] = useState<Partial<MarketTypes> | null>(null);
   const [intradayData, setIntradayData] = useState<any | null>(null);
   const [intradayError, setIntradayError] = useState<string | null>(null);
 
   const alphaVantage = AlphaVantage();
 
-  const select = (val: Stock) => {
+  const select = (val: Partial<MarketTypes>) => {
     setSelection(val);
   };
 
@@ -72,13 +74,6 @@ export const MarketProvider = ({ children }: { children: ReactNode }) => {
       setIntradayData(null);
     }
   };
-
-  useEffect(() => {
-    console.log("Selection: ", selection);
-    if (selection?.ticker) {
-      fetchIntraday(selection.ticker);
-    }
-  }, [selection]);
 
   return (
     <MarketContext.Provider

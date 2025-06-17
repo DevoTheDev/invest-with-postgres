@@ -1,13 +1,12 @@
 "use client";
 import React from 'react'
-import { useUser } from '@/app/hooks/useProfile';
+import { useProfile } from '@/app/hooks/useProfile';
 
 type Props = {}
 
 const DeleteAccount = (props: Props) => {
-    const { deleteUser } = useUser();
   return (
-    <div onClick={deleteUser}>
+    <div >
         Delete Account
     </div>
   )

@@ -2,34 +2,41 @@ import {
   Entity,
   PrimaryGeneratedColumn,
   Column,
-  ManyToOne,
   CreateDateColumn,
   UpdateDateColumn,
   JoinColumn,
   Index,
 } from "typeorm";
-import { User } from "../User";
-import { Profile } from "../Profile";
 
-export enum FitnessGoal {
-  LOSE_WEIGHT = "lose_weight",
-  GAIN_MUSCLE = "gain_muscle",
-  MAINTAIN_WEIGHT = "maintain_weight",
-  IMPROVE_ENDURANCE = "improve_endurance",
-  GENERAL_FITNESS = "general_fitness",
+// Enum for training emphasis
+export enum TrainingEmphasis {
+  MUSCLE_SIZE = "muscle_size",
+  MUSCLE_STRENGTH = "muscle_strength",
+  MUSCLE_ENDURANCE = "muscle_endurance",
+  MUSCLE_SHAPE = "muscle_shape",
 }
 
-export enum ActivityLevel {
-  SEDENTARY = "sedentary",
-  LIGHTLY_ACTIVE = "lightly_active",
-  MODERATELY_ACTIVE = "moderately_active",
-  VERY_ACTIVE = "very_active",
-  SUPER_ACTIVE = "super_active",
+// Movement base
+export class Movement {
+  title!: string;
+  description!: string;
 }
+
+// Exercise extends Movement
+export class Exercise extends Movement {
+  reps!: number;
+  sets!: number;
+}
+
+// Workout type for storage
+export type Workout = {
+  id: string;
+  title: string;
+  workouts: Exercise[];
+};
 
 @Entity("exercisers")
 @Index("idx_exercisers_user_id", ["user_id"])
-@Index("idx_exercisers_profile_id", ["profile_id"])
 export class Exerciser {
   @PrimaryGeneratedColumn("uuid")
   id!: string;
@@ -37,36 +44,27 @@ export class Exerciser {
   @Column("uuid")
   user_id!: string;
 
-  @Column("uuid")
-  profile_id!: string;
-
   @Column({
     type: "enum",
-    enum: FitnessGoal,
-    default: FitnessGoal.GENERAL_FITNESS,
+    enum: TrainingEmphasis,
+    default: TrainingEmphasis.MUSCLE_SIZE,
   })
-  fitness_goal!: FitnessGoal;
+  training_emphasis?: TrainingEmphasis;
 
-  @Column({
-    type: "enum",
-    enum: ActivityLevel,
-    default: ActivityLevel.SEDENTARY,
-  })
-  activity_level!: ActivityLevel;
-
+  // Store array of workouts as JSONB
   @Column("jsonb", { default: () => "'[]'" })
-  preferred_exercise_types!: string[];
+  programs?: Workout[];
 
-  @Column("float", { nullable: true })
+  @Column("float")
   height_cm?: number;
 
-  @Column("float", { nullable: true })
+  @Column("float")
   weight_kg?: number;
 
-  @Column("float", { nullable: true })
+  @Column("float")
   body_fat_percentage?: number;
 
-  @Column("int", { nullable: true })
+  @Column("float")
   weekly_workout_frequency?: number;
 
   @CreateDateColumn()
@@ -74,13 +72,4 @@ export class Exerciser {
 
   @UpdateDateColumn()
   updated_at!: Date;
-
-  @ManyToOne(() => User, (user) => user.exercisers, { onDelete: "CASCADE" })
-  @JoinColumn({ name: "user_id" })
-  user!: User;
-
-  @ManyToOne(() => Profile, (profile) => profile.id, { onDelete: "CASCADE" })
-  @JoinColumn({ name: "profile_id" })
-  profile!: Profile;
 }
-

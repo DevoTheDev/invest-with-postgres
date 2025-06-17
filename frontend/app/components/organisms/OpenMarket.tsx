@@ -1,30 +1,19 @@
 "use client";
 import React, { useContext, useState } from "react";
 import TopGainersAndLosers from "./TopGainersAndLosers";
-import { stocks } from "@/app/defaults/companies/top200";
-import { useUser } from "@/app/hooks/useProfile";
-import StockLabel from "../atoms/StockLabel";
-import formatStockMovements from "@/app/utils/marketUtils";
+import { defaultTickers } from "@/app/defaults/polygonIo-defaults/defaultTickers";
+import { useProfile } from "@/app/hooks/useProfile";
+import TickerSearch from "./TickerSearch";
 
 const OpenMarket = () => {
   const [error, setError] = useState<string | null>(null);
-  const { profile } = useUser();
+  const { profile } = useProfile();
 
   return (
     <div className=" gap-2">
       <TopGainersAndLosers />
-      <div className="m-2 grid grid-cols-1 gap-2" >
-        {formatStockMovements(stocks).map((stock, i) => {
-          return (
-            <StockLabel
-              key={i}
-              stock={stock}
-              hideShareCount
-              hideMarketCap
-              hideMovement
-            />
-          )
-        })}
+      <div className="" >
+        <TickerSearch tickers={defaultTickers.results} />
       </div>
     </div>
   );

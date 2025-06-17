@@ -1,30 +1,43 @@
 // components/Modal.tsx
 "use client";
-import React from 'react';
+import React from "react";
+import XButton from "../molecules/XButton";
 
 type ModalProps = {
   isOpen: boolean;
   onClose: () => void;
   children: React.ReactNode;
+  styles?: ModalStyles;
 };
 
-const Modal: React.FC<ModalProps> = ({ isOpen, onClose, children }) => {
+interface ModalStyles {
+  overlay?: string;
+  wrapper?: string;
+  closeButton?: string;
+}
+
+const defaultStyles: ModalStyles = {
+  overlay: "fixed inset-0 z-50 flex items-center justify-center bg-opacity-20 backdrop-blur-md",
+  wrapper: "relative bg-gray-900 rounded-2xl p-6 shadow-2xl w-[90%] max-w-2xl max-h-[80%] overflow-y-auto text-white ring-1 ring-gray-700",
+  closeButton: "",
+};
+
+const Modal: React.FC<ModalProps> = ({ isOpen, onClose, children, styles = {} }) => {
   if (!isOpen) return null;
 
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-60 backdrop-blur-sm">
-      <div className="relative bg-gray-900 rounded-2xl p-6 shadow-2xl w-[90%] max-w-2xl max-h-[80%] overflow-y-auto text-white ring-1 ring-gray-700">
-        {/* Close Button */}
-        <button
-          onClick={onClose}
-          className="absolute top-4 right-4 text-gray-400 hover:text-white text-xl"
-        >
-          ✖
-        </button>
+  const mergedStyles = { ...defaultStyles, ...styles };
 
-        {/* Modal Content */}
+  return (
+    <div
+      className={mergedStyles.overlay}
+    >
+      <div
+        className={mergedStyles.wrapper}>
         {children}
       </div>
+      <button
+        onClick={onClose}
+        className="bg-red-400 px2 py-1 rounded-md"  >Close</button>
     </div>
   );
 };

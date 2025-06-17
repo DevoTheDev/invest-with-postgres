@@ -1,18 +1,13 @@
 import {
   Entity,
   Column,
-  PrimaryColumn,
-  OneToOne,
-  JoinColumn,
-  Index,
+  PrimaryGeneratedColumn,
   CreateDateColumn,
-  UpdateDateColumn,
-  PrimaryGeneratedColumn
+  UpdateDateColumn
 } from "typeorm";
-import { User } from "./User";
 import { UserProfile, ThemePreference, LanguageOption } from "../types/shared/shared-types";
 
-@Entity("profiles") // plural
+@Entity("profiles")
 export class Profile implements UserProfile {
   @PrimaryGeneratedColumn("uuid")
   id!: string;
@@ -23,8 +18,11 @@ export class Profile implements UserProfile {
   @Column({ type: "varchar", length: 255 })
   email: string = "";
 
-  @Column({ type: "varchar", length: 50, unique: true })
-  username: string = "";
+  @Column({ type: "varchar", length: 50, unique: true, nullable: true })
+  username?: string = "";
+
+  @Column({ type: "varchar", length: 20, nullable: true })
+  phone?: string;  // Matches optional in interface
 
   @Column({ type: "text", nullable: true })
   bio?: string;
@@ -42,10 +40,7 @@ export class Profile implements UserProfile {
   notifications: { email: boolean; push: boolean } = { email: true, push: true };
 
   @Column({ type: "jsonb", default: () => "'{\"backgroundSync\": false, \"activityLogs\": false}'" })
-  dataUsage: { backgroundSync: boolean; activityLogs: boolean } = {
-    backgroundSync: false,
-    activityLogs: false,
-  };
+  dataUsage: { backgroundSync: boolean; activityLogs: boolean } = { backgroundSync: false, activityLogs: false };
 
   @Column({ type: "boolean", default: false })
   isEmailVerified: boolean = false;
@@ -59,7 +54,6 @@ export class Profile implements UserProfile {
   @UpdateDateColumn()
   updated_at!: Date;
 
-  @OneToOne(() => User, (user) => user.profile, { onDelete: "CASCADE" })
-  @JoinColumn({ name: "id", referencedColumnName: "id" }) // PK join
-  user!: User;
+  @Column("uuid")
+  user_id!: string;
 }

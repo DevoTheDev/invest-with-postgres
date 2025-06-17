@@ -1,43 +1,28 @@
-import axios, { AxiosError } from "axios";
+// InvestorController.ts
+import axios, { AxiosError, AxiosResponse } from "axios";
 import { Investor } from "../types/Investor";
+import { getAuthHeaders, extractErrorMessage } from "../utils/apiUtils";
 
-const extractErrorMessage = (error: unknown): string => {
-  if (axios.isAxiosError(error)) {
-    const axiosError = error as AxiosError<any>;
-    const status = axiosError.response?.status;
-    const serverMessage = axiosError.response?.data?.message;
-    return `(${status}) ${serverMessage || axiosError.message}`;
-  }
+const getInvestor = async (): Promise<AxiosResponse<{ message: string, data: { investor: Investor } }>> => {
 
-  return (error as Error)?.message || "Unknown error occurred";
-};
-
-export const getInvestor = async (): Promise<Investor> => {
   try {
-    const response = await axios.get(`/investors/`);
-    return response.data.data.investor as Investor;
+    const response = await axios.get('/investors', { headers: getAuthHeaders() });
+    return response;
   } catch (error) {
     const message = extractErrorMessage(error);
     console.error("🔴 Get investor failed:", message);
-    throw new Error(`Failed to fetch investor: ${message}`);
+    if (axios.isAxiosError(error) && error.response) {
+      console.error("🔴 Axios response data:", error.response.data);
+    }
+    throw new Error(`Failed to get investor: ${message}`);
   }
 };
 
-export const createInvestor = async (dto: Partial<Investor>): Promise<Investor> => {
-  try {
-    const response = await axios.post(`/investors/`, dto);
-    return response.data.data.investor as Investor;
-  } catch (error) {
-    const message = extractErrorMessage(error);
-    console.error("🔴 Create investor failed:", message);
-    throw new Error(`Failed to create investor: ${message}`);
-  }
-};
 
-export const updateInvestor = async (dto: Partial<Investor>): Promise<Investor> => {
+const updateInvestor = async (dto: Investor): Promise<AxiosResponse<{ message: string, data: { updatedInvestor: Investor } }>> => {
   try {
-    const response = await axios.put(`/investors/`, dto);
-    return response.data.data.investor as Investor;
+    const response = await axios.put('/investors', dto, { headers: getAuthHeaders() });
+    return response;
   } catch (error) {
     const message = extractErrorMessage(error);
     console.error("🔴 Update investor failed:", message);
@@ -45,12 +30,11 @@ export const updateInvestor = async (dto: Partial<Investor>): Promise<Investor> 
   }
 };
 
-export const deleteInvestor = async (): Promise<void> => {
-  try {
-    await axios.delete(`/investors/`);
-  } catch (error) {
-    const message = extractErrorMessage(error);
-    console.error("🔴 Delete investor failed:", message);
-    throw new Error(`Failed to delete investor: ${message}`);
-  }
+const InvestorController = () => {
+  return {
+    getInvestor,
+    updateInvestor,
+  };
 };
+
+export default InvestorController;

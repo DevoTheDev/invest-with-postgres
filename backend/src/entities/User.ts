@@ -5,13 +5,12 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   OneToOne,
-  OneToMany,
 } from "typeorm";
 import { Profile } from "./Profile";
 import { Exerciser } from "./Exerciser-Entities/Exerciser";
 import { Investor } from "./Investor-Entities/Investor";
 
-@Entity("users") // plural for consistency
+@Entity("users")
 export class User {
   @PrimaryGeneratedColumn("uuid")
   id!: string;
@@ -22,13 +21,13 @@ export class User {
   @Column({ type: "varchar" })
   password!: string;
 
-  @OneToOne(() => Profile, (profile) => profile.user, { cascade: true })
+  @OneToOne(() => Profile, (profile) => profile.user_id, { cascade: true })
   profile!: Profile;
 
-  @OneToMany(() => Exerciser, (exerciser) => exerciser.user)
+  @OneToOne(() => Exerciser, (exerciser) => exerciser.user_id, { cascade: true })
   exercisers!: Exerciser[];
 
-  @OneToMany(() => Investor, (investor) => investor.user)
+  @OneToOne(() => Investor, (investor) => investor.user_id, { cascade: true })
   investors!: Investor[];
 
   @CreateDateColumn()

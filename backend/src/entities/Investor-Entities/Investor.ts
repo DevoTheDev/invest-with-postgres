@@ -2,14 +2,10 @@ import {
   Entity,
   Column,
   PrimaryGeneratedColumn,
-  ManyToOne,
   CreateDateColumn,
   UpdateDateColumn,
-  JoinColumn,
   Index,
 } from "typeorm";
-import { User } from "../User";
-import { Profile } from "../Profile";
 
 export enum InvestmentGoal {
   LONG_TERM_GROWTH = "long_term_growth",
@@ -30,34 +26,24 @@ export enum ExperienceLevel {
   EXPERIENCED = "experienced",
 }
 
-export enum AssetClass {
-  STOCKS = "stocks",
-  BONDS = "bonds",
-  ETFS = "etfs",
-  REAL_ESTATE = "real_estate",
-  CRYPTO = "crypto",
-}
+
+// Investment representation
+export type Investment = {
+  id: string,
+  ticker: string;        
+  quantity: number;      
+  purchase_price: number;
+  purchase_date: Date;   
+};
 
 @Entity("investors")
 @Index("idx_investors_user_id", ["user_id"])
-@Index("idx_investors_profile_id", ["profile_id"])
 export class Investor {
   @PrimaryGeneratedColumn("uuid")
   id!: string;
 
   @Column("uuid")
   user_id!: string;
-
-  @Column("uuid")
-  profile_id!: string;
-
-  @ManyToOne(() => User, (user) => user.investors, { onDelete: "CASCADE" })
-  @JoinColumn({ name: "user_id" })
-  user!: User;
-
-  @ManyToOne(() => Profile, (profile) => profile.id, { onDelete: "CASCADE" })
-  @JoinColumn({ name: "profile_id" })
-  profile!: Profile;
 
   @Column({
     type: "enum",
@@ -80,14 +66,19 @@ export class Investor {
   })
   experience_level!: ExperienceLevel;
 
-  @Column("enum", { enum: AssetClass, array: true, default: [] })
-  preferred_asset_classes!: AssetClass[];
-
   @Column("integer", { default: 0 })
   annual_investment_budget!: number;
 
   @Column("boolean", { default: false })
   auto_invest_enabled!: boolean;
+
+  // 🔥 NEW: Watchlist of stock tickers
+  @Column("text", { array: true, default: [] })
+  watchlist!: string[];
+
+  // 🔥 NEW: List of investments (as JSONB)
+  @Column("jsonb", { default: () => "'[]'" })
+  investments!: Investment[];
 
   @CreateDateColumn()
   created_at!: Date;
@@ -95,3 +86,4 @@ export class Investor {
   @UpdateDateColumn()
   updated_at!: Date;
 }
+

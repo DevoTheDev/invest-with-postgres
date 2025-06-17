@@ -1,10 +1,10 @@
 "use client";
 import React from 'react';
 import { useRouter } from 'next/navigation';
-import { formatHeader } from '../../utils/stringUtils';
+import { formatRoute } from '../../utils/stringUtils';
 import Logout from '../atoms/Logout';
 
-const routes = ["portfolio", "market", "profile", "sandbox"];
+const routes = ["investor", "market", "fitness", "settings", "sandbox"];
 
 const Navigation = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) => {
   const router = useRouter();
@@ -47,7 +47,7 @@ const Navigation = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => void 
                   shadow hover:shadow-lg cursor-pointer
                 `}
               >
-                {formatHeader(route)}
+                {formatRoute(route)}
               </button>
             );
           })}
