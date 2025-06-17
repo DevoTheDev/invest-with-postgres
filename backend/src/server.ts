@@ -14,7 +14,8 @@ import investorRoutes from "./routes/investor-routes/investorRoutes";
 import exerciserRoutes from "./routes/exerciser-routes/exerciserRoutes";
 import { requestLogger } from "./middleware/requestLogger";
 import 'reflect-metadata';
-import * as punycode from "punycode";
+import programsRoutes from "../src/routes/exerciser-routes/programsRoutes";
+import investmentsRoutes from "./routes/investor-routes/investmentsRoutes";
 
 
 const app = express();
@@ -36,12 +37,17 @@ app.get("/api/ping", (_req, res) => {
 // Routes
 app.use("/api/users", userRoutes);
 app.use("/api/profiles", profileRoutes);
-app.use("/api/investors", investorRoutes);
 app.use("/api/secure-keys", secureKeysRoutes);
+
+app.use("/api/investors", investorRoutes);
+app.use("/api/investors/investments", investmentsRoutes);
 app.use("/api/market",  marketRoutes);
 app.use("/api/alpha-vantage", alphaVantageRoutes);
 app.use("/api/polygon-io", polygonIoRoutes);
+
 app.use("/api/exercisers", exerciserRoutes);
+app.use("/api/exercisers/programs", programsRoutes);
+
 
 // ✅ Global Error Handler (after routes)
 app.use(errorHandler);

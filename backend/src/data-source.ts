@@ -6,6 +6,7 @@ import { Secret } from "./entities/Secret";
 import { Profile } from "./entities/Profile";
 import { Investor } from './entities/Investor-Entities/Investor';
 import { Exerciser } from './entities/Exerciser-Entities/Exerciser';
+import { Movement } from "./entities/Exerciser-Entities/Movement";
 
 dotenv.config();
 
@@ -30,7 +31,7 @@ export const AppDataSource = new DataSource({
 
   */ 
   logging: process.env.NODE_ENV === "development",
-  entities: [User, Secret, Profile, Investor, Exerciser],
+  entities: [User, Secret, Profile, Investor, Exerciser, Movement],
   migrations: [],
   subscribers: [],
 });

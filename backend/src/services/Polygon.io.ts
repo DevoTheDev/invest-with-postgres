@@ -8,9 +8,9 @@ export async function getTickers(req: Request, res: Response): Promise<void> {
       const data = await polygon.reference.tickers({
         market: "stocks",
         active: "true",
-        order: "asc",
+        order: "desc",
         limit: 1000,
-        sort: "ticker"
+        sort: "ticker",
       });
 
       res.json(data);
