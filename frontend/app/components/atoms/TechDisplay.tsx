@@ -137,7 +137,7 @@ const TechDisplay: React.FC<TechDisplayProps> = (props) => {
             href={tech.docs}
             target="_blank"
             rel="noopener noreferrer"
-            className="hover:scale-120 transition-transform duration-200 hover:opacity-75"
+            className="hover:scale-120 transition-transform duration-200 hover:opacity-75 rounded-full"
           >
             <Image
               src={tech.src}
