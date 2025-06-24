@@ -57,18 +57,18 @@ export default function SignInPage() {
 
   return (
     <div
-      style={{ backgroundImage: "url('/backgrounds/Warm-nebula-BG.png')" }}
+      style={{ backgroundImage: "url('/backgrounds/fitshadow.png')" }}
       className="min-h-screen flex items-center justify-center bg-cover bg-center relative">
       {/* Blur Overlay */}
-      <div className="absolute inset-0 bg-black/60 backdrop-blur-lg z-0" />
+      <div className="absolute inset-0 bg-black/60 backdrop-blur-xl z-0" />
 
       {/* Auth Card */}
       <div className="relative z-10 w-full max-w-md mx-auto p-8 rounded-3xl shadow-2xl bg-white/10 border border-white/20 backdrop-blur-2xl text-white space-y-8">
         {/* Header */}
         <div className="text-center space-y-2">
-          <Customs.Text colors={['#45fed5', '#646def']} textSize='text-4xl' >
+          <div className='text-4xl font-semibold' >
             {signInType === "login" ? "Welcome Back" : "Get Started"}
-          </Customs.Text>
+          </div>
           <p className="text-sm text-white/70 font-light">{t.subtitle}</p>
         </div>
 
@@ -94,11 +94,11 @@ export default function SignInPage() {
                     message: 'Invalid email address',
                   },
                 })}
-                className="w-full px-4 py-2 bg-white/10 border border-white/30 rounded-md text-white placeholder:text-white/50 focus:outline-none focus:ring-2 focus:ring-[#45fed5]"
+                className="w-full px-4 py-2 bg-white/10 border border-white/30 rounded-md text-white placeholder:text-white/50 focus:outline-none focus:ring-2 focus:ring-[#f9c46e] focus:bg-black font-semibold"
                 placeholder="Enter email here"
               />
               {errors.email && (
-                <p className="text-[#f93745] text-xs mt-1">{errors.email.message}</p>
+                <p className="text-[#f89da4] text-xs mt-1">{errors.email.message}</p>
               )}
             </div>
 
@@ -107,17 +107,17 @@ export default function SignInPage() {
               <input
                 type="password"
                 {...register('password', { required: 'Password is required' })}
-                className="w-full px-4 py-2 bg-white/10 border border-white/30 rounded-md text-white placeholder:text-white/50 focus:outline-none focus:ring-2 focus:ring-[#45fed5]"
+                className="w-full px-4 py-2 bg-white/10 border border-white/30 rounded-md text-white placeholder:text-white/50 focus:outline-none focus:ring-2 focus:ring-[#f9c46e] focus:bg-black font-semibold"
                 placeholder="Enter password here"
               />
               {errors.password && (
-                <p className="text-[#f93745] text-xs mt-1">{errors.password.message}</p>
+                <p className="text-[#f89da4] text-xs mt-1">{errors.password.message}</p>
               )}
             </div>
             <Customs.Button
               type='submit'
               disabled={isSubmitting || authLoading}
-              colors={["#646def", "#f93745"]}
+              colors={["#ffffff", "#000000"]}
               className='w-1/2 self-center'
             >
               {isSubmitting || authLoading ? 'Loading...' : t.button}

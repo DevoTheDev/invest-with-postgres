@@ -2,8 +2,6 @@
 import React, { useState } from "react";
 import Navigation from "./Navigation";
 import { useProfile } from "../../hooks/useProfile";
-import { usePathname } from "next/navigation";
-import { formatRoute } from "@/app/utils/stringUtils";
 import { useRouter } from "next/navigation";
 import ColoredText from "../atoms/ColoredText";
 import EmberBackground from "../backgrounds/EmberBackground";
@@ -11,39 +9,35 @@ import EmberBackground from "../backgrounds/EmberBackground";
 const Header = () => {
   const { profile } = useProfile();
   const [isSidebarOpen, setSidebarOpen] = useState(false);
-  const router = useRouter();
 
   return (
     <>
-      <header className="flex flex-col bg-blur w-full justify-evenly">
-        <div
-          className="flex justify-between"
-        >
-          {/* Brand */}
-          <div
-            onClick={() => setSidebarOpen(true)}
-            className="font-extrabold text-2xl cursor-pointer hover:opacity-40 p-6 ">
-            <ColoredText
-              colors={['#000000', '#FFA500', '#FF8C00']}
-              size="text-5xl"
-              weight="font-extrabold"
-              shadow={true}
+        <header className="flex flex-col w-full bg-black backdrop-blur-md border-b border-white/10 shadow-sm">
+          <div className="flex justify-between items-center p-8">
+            {/* Brand */}
+            <div
+              onClick={() => setSidebarOpen(true)}
+              className="cursor-pointer transition-opacity duration-200 hover:opacity-60"
             >
-              Dev
-            </ColoredText>
-            <ColoredText
-              colors={['#FFA500', '#FF8C00', '#000000']}
-              size="text-5xl"
-              weight="font-extrabold"
-              shadow={true}
-            >
-              Element
-            </ColoredText>
+              <ColoredText
+                colors={['#000000', '#333333', '#ffffff']}
+                size="text-3xl md:text-4xl"
+                weight="font-extrabold"
+                shadow={false}
+              >
+                Dev
+              </ColoredText>
+              <ColoredText
+                colors={['#ffffff', '#333333', '#000000']}
+                size="text-3xl md:text-4xl"
+                weight="font-extrabold"
+                shadow={false}
+              >
+                Element
+              </ColoredText>
+            </div>
           </div>
-        </div>
-      </header>
-
-
+        </header>
       {/* Sidebar */}
       <Navigation isOpen={isSidebarOpen} onClose={() => setSidebarOpen(false)} />
     </>
