@@ -31,3 +31,13 @@
   }
 }
 
+/* Make snap scroll slower and less aggressive */
+.scroll-container {
+  scroll-behavior: smooth;
+  scroll-snap-type: y mandatory;
+  scroll-snap-stop: always;
+  scroll-padding-top: 1rem;
+  scroll-snap-align: start;
+  scroll-timeline: auto;
+}
+

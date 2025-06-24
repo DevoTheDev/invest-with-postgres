@@ -47,10 +47,10 @@ export default function SignInPage() {
     try {
       if (signInType === 'login') await login(data);
       if (signInType === 'register') await createAccount(data);
-      router.push('/');
     } catch (err: any) {
       throw new Error(err || 'Something went wrong. Please try again.');
     }
+    router.push("/investor")
   };
 
   const t = AUTH_TEXT[signInType];

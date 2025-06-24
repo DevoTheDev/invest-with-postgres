@@ -3,7 +3,7 @@ import React, { useState, useRef, useEffect } from "react";
 import { useProfile } from "@/app/hooks/useProfile";
 import { useInvestor } from "@/app/hooks/useInvestor";
 import { useExerciser } from "@/app/hooks/useExerciser";
-import CollapsibleSection from "@/app/components/molecules/CollapsibleSection";
+import CollapsibleSection from "@/app/components/sections/CollapsibleSection";
 
 const ProfilePage: React.FC = () => {
   const { profile, loading: profileLoading, error: profileError, form: profileForm } = useProfile();

@@ -5,44 +5,43 @@ import { useProfile } from "../../hooks/useProfile";
 import { usePathname } from "next/navigation";
 import { formatRoute } from "@/app/utils/stringUtils";
 import { useRouter } from "next/navigation";
+import ColoredText from "../atoms/ColoredText";
+import EmberBackground from "../backgrounds/EmberBackground";
 
 const Header = () => {
   const { profile } = useProfile();
   const [isSidebarOpen, setSidebarOpen] = useState(false);
-  const pathname = usePathname();
-  const router = useRouter(); 
+  const router = useRouter();
 
   return (
     <>
-      <header className="flex flex-col justify-evenly p-4 bg-gray-200">
+      <header className="flex flex-col bg-blur w-full justify-evenly">
         <div
-          className="flex justify-between p-4"
+          className="flex justify-between"
         >
           {/* Brand */}
           <div
             onClick={() => setSidebarOpen(true)}
-            className="font-extrabold text-2xl cursor-pointer hover:opacity-40">
-            <span className="text-blue-600">
+            className="font-extrabold text-2xl cursor-pointer hover:opacity-40 p-6 ">
+            <ColoredText
+              colors={['#000000', '#FFA500', '#FF8C00']}
+              size="text-5xl"
+              weight="font-extrabold"
+              shadow={true}
+            >
               Dev
-            </span>
-            <span className="text-black">
+            </ColoredText>
+            <ColoredText
+              colors={['#FFA500', '#FF8C00', '#000000']}
+              size="text-5xl"
+              weight="font-extrabold"
+              shadow={true}
+            >
               Element
-            </span>
+            </ColoredText>
           </div>
-
-          {/* Welcome Message */}
-          <div 
-          className="text-center items-center font-bold"
-          onClick={() => router.push("/settings")}
-          >
-            Welcome, <span className="">{profile?.name || "User"}</span>
-          </div>
-
         </div>
       </header>
-      <div className="flex bg-gray-100 p-2 justify-center font-bold" >
-        {formatRoute(pathname)}
-      </div>
 
 
       {/* Sidebar */}
