@@ -11,6 +11,11 @@ interface TechDisplayProps {
   tailwind?: boolean;
   mui?: boolean;
   docker?: boolean;
+  mongodb?: boolean;
+  nextjs?: boolean;
+  python?: boolean;
+  css?: boolean;
+  javascript?: boolean;
   github?: boolean;
   linkedin?: boolean;
   layout?: "row" | "grid";
@@ -75,13 +80,43 @@ const techMap = [
     src: "/logos/linkedin.svg",
     docs: "https://www.linkedin.com/in/devon-fennell-509997258",
   },
+  {
+    key: "mongodb",
+    label: "MongoDB",
+    src: "/logos/mongodb.svg",
+    docs: "https://www.mongodb.com/docs/",
+  },
+  {
+    key: "nextjs",
+    label: "NextJS",
+    src: "/logos/nextjs.svg",
+    docs: "https://nextjs.org/",
+  },
+  {
+    key: "css",
+    label: "CSS3",
+    src: "/logos/css.svg",
+    docs: "https://developer.mozilla.org/en-US/docs/Web/CSS",
+  },
+  {
+    key: "python",
+    label: "Python",
+    src: "/logos/python2.svg",
+    docs: "https://docs.python.org/3/",
+  },
+  {
+    key: "javascript",
+    label: "Javascript",
+    src: "/logos/javascript.svg",
+    docs: "https://developer.mozilla.org/en-US/docs/Web/JavaScript",
+  },
 ] as const;
 
 const TechDisplay: React.FC<TechDisplayProps> = (props) => {
   const {
     layout = "row",
     size = 48,
-    gap = "gap-4",
+    gap = "gap-24",
     centered = false,
     label = true,
     ...techFlags
@@ -97,7 +132,7 @@ const TechDisplay: React.FC<TechDisplayProps> = (props) => {
   return (
     <div className={layoutClass}>
       {selected.map((tech) => (
-        <div key={tech.key} className="flex flex-col items-center text-center p-4">
+        <div key={tech.key} className="flex flex-col items-center text-center">
           <a
             href={tech.docs}
             target="_blank"

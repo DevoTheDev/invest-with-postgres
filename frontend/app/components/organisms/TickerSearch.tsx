@@ -2,7 +2,6 @@
 import React, { useState, useMemo } from "react";
 import Modal from "../atoms/Modal";
 import TickerLabel from "../atoms/TickerLabel";
-import InvestmentForm from "../molecules/InvestmentForm";
 import { Ticker } from "@/app/types/Investor";
 
 interface TickerSearchProps {
@@ -80,7 +79,7 @@ const TickerSearch: React.FC<TickerSearchProps> = ({ tickers, styles = {} }) => 
         onClose={() => setSelection(null)}
         styles={{ closeButton: "bg-red-400 rounded-full" }}
       >
-        {selection && <InvestmentForm ticker={selection} />}
+        Beans
       </Modal>
 
       <div className={mergedStyles.container}>
