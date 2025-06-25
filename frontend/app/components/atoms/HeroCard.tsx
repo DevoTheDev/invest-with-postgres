@@ -1,63 +1,92 @@
-"use client"
-import React from 'react'
-import Image from 'next/image'
-import TechDisplay from './TechDisplay'
+"use client";
+import React from "react";
+import Image from "next/image";
+import DynamicStyling from "@/app/utils/styling/DynamicStyling";
+import TechDisplay from "../TechUsed/TechDisplay";
 
-type Props = {}
+const HeroCard = () => {
+  const containerClass = DynamicStyling({
+    base: "w-full h-full flex flex-col justify-evenly",
+    
+  });
 
-const HeroCard = (props: Props) => {
+  const sectionClass = DynamicStyling({
+    base: "flex flex-col items justify-start items-start gap-8 text-left relative m-36",
+    
+  });
+
+  const headingClass = DynamicStyling({
+    base: "text-3xl font-extrabold text-black/70 text-center leading-snug text-left",
+    
+  });
+
+  const paragraphClass = DynamicStyling({
+    base: "text-base text-white/80 text-center flex text-left",
+    
+  });
+
+  const imageWrapper = DynamicStyling({
+    base: "relative w-44 h-80 rounded-xl overflow-hidden shadow-xl",
+    
+  });
+
+  const imageOnePosition = DynamicStyling({
+    base: "absolute right-24 bottom-16",
+    
+
+  });
+
+  const imageTwoPosition = DynamicStyling({
+    base: "absolute right-64 bottom-[-108]",
+    
+
+  });
+
   return (
-    <div className='h-full flex flex-col justify-evenly'>
-      <div className="flex items-center justify-center gap-60">
-        <div className="flex flex-col items-center justify-center pt-36 gap-4">
-          <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight leading-tight mb-4 bg-gradient-to-b from-black to-white bg-clip-text text-transparent">
-            Devon's Development
-          </h1>
-          <p className="text-md max-w-md">
-            <span className=" bg-gradient-to-b from-white to-black bg-clip-text text-transparent ">
-              The is the delivery of all of Devon's developement as a developer. A showcase of all i've learned in the year since I lost my junior-dev position and struggled to get hired because the scope of my limited skillset and lack of degree.
+    <div className={containerClass}>
+      <div className={sectionClass}>
+        {/* Text Content */}
+        <div className="flex flex-col items-center text-center gap-4 w-full md:w-3/4 lg:w-1/2">
+          <h1 className={headingClass}>Devon’s Development</h1>
+          <p className={paragraphClass}>
+            <span className="text-black/70 block">
+              This is the delivery of all of Devon's development as a developer.
+              A showcase of everything I've built since losing my junior-dev
+              position and working relentlessly to grow past my previous
+              limitations.
             </span>
           </p>
         </div>
-        <div className="w-56 h-138 mb-6 rounded-xl overflow-hidden shadow-lg relative">
-          <Image
-            src="/personal/Me.png"
-            alt="Developer portrait"
-            fill
-            priority
-            className="object-cover"
-          />
+
+        {/* Portraits */}
+        <div className="w-full">
+          <div className={imageOnePosition}>
+            <div className={imageWrapper}>
+              <Image
+                src="/personal/Me.png"
+                alt="Developer portrait"
+                fill
+                priority
+                className="object-cover"
+              />
+            </div>
+          </div>
+
+          <div className={imageTwoPosition}>
+            <div className={imageWrapper}>
+              <Image
+                src="/personal/meBW.JPG"
+                alt="Developer portrait black and white"
+                fill
+                priority
+                className="object-cover"
+              />
+            </div>
+          </div>
         </div>
-        <div className=" flex items-end justify-end pt-18">
-          <TechDisplay
-            github
-            linkedin
-            size={70}
-            label={false}
-          />
-        </div>
-      </div>
-      <div className='flex justify-center' >
-        <TechDisplay
-          react
-          typescript
-          express
-          tailwind
-          postgres
-          mui
-          docker
-          mongodb
-          nextjs
-          python
-          css
-          javascript
-          centered
-          label={false}
-        />
       </div>
     </div>
+  );
+};
 
-  )
-}
-
-export default HeroCard
+export default HeroCard;

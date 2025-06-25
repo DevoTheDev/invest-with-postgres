@@ -37,13 +37,16 @@ const Section: React.FC<SectionProps> = ({ id, backgroundColor = 'bg-white', tex
       id={id}
       className={clsx(
         'flex items-center justify-center snap-start',
-        scrollDirection === 'horizontal' ? 'min-w-full h-screen' : 'w-full h-screen',
+        scrollDirection === 'horizontal' ? 'min-w-full h-screen' : 'w-full h-lvh',
         backgroundColor
       )}
       initial={{ opacity: 0, [scrollDirection === 'horizontal' ? 'x' : 'y']: 50 }}
       animate={controls}
     >
-      <div className={clsx('text-center flex items-center justify-center w-full h-full', textColor)}>
+      <div className={clsx(`
+      flex
+      text-center items-center
+       justify-center w-full h-screen`, textColor)}>
         {children}
       </div>
     </motion.section>

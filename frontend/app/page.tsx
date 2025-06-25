@@ -2,11 +2,15 @@
 import ColoredText from "./components/atoms/ColoredText";
 import HeroCard from "./components/atoms/HeroCard";
 import MovementCard from "./components/atoms/MovementCard";
+import TechDisplay from "./components/TechUsed/TechDisplay";
 import BlackSnowBackground from "./components/backgrounds/BlackSnowBackground";
 import Header from "./components/molecules/Header";
 import SmoothTransition from "./components/sections/SmoothTransition";
 import { useExerciser } from "./hooks/useExerciser";
 import { useRouter } from "next/navigation";
+import { motion } from "framer-motion";
+import TechStack from "./components/TechUsed/TechStack";
+
 
 export default function Home() {
   const { movements } = useExerciser();
@@ -21,6 +25,7 @@ export default function Home() {
       alt: string
     };
   }
+
 
   const apps: AppLink[] = [
     {
@@ -50,13 +55,14 @@ export default function Home() {
       onClick: () => router.push("/"),
       img: {
         alt: "DevelementApp",
+        url: "icons/person-icon.svg"
       },
     },
   ];
-  
+
   const AppCard = (app: AppLink): React.ReactNode => {
     if (app.title === "Develement") return null;
-  
+
     return (
       <div
         onClick={app.onClick}
@@ -65,7 +71,7 @@ export default function Home() {
           flex justify-between items-center gap-4 p-6
           bg-gray-500/40 hover:bg-gray-500/30 
           transition-all duration-300 transform hover:scale-[1.02] 
-          cursor-pointer
+          cursor-pointer backdrop-blur-md
         `}
       >
         <div className="space-y-2">
@@ -86,7 +92,7 @@ export default function Home() {
       </div>
     );
   };
-  
+
 
   return (
     <div>
@@ -121,23 +127,51 @@ export default function Home() {
             backgroundColor=""
             textColor="text-black"
           >
-            <h2 className="text-4xl md:text-6xl font-bold mb-6 py-2 bg-gradient-to-t from-black to-white bg-clip-text text-transparent">Elegant Design</h2>
-            <p className="text-lg md:text-xl py-2 bg-gradient-to-b from-black to-white bg-clip-text text-transparent">
+            <div className={`
+            lg:flex lg:items-center lg:justify-center lg:w-full lg:text-center
+
+            md:grid md:items-center md:justify-center md:w-full md:text-center
+            grid  w-full
+            
+            `}>
+            <h2 
+            className={`
+            lg:bg-gradient-to-t lg:from-black lg:to-white lg:bg-clip-text lg:text-transparent
+            lg:text-5xl
+
+            md:bg-gradient-to-b md:from-black md:to-white md:bg-clip-text md:text-transparent
+            md:text-5xl
+
+            text-3xl font-bold pb-5
+             `}
+            >Elegant Design</h2>
+            <p 
+            className={`
+            lg:bg-gradient-to-b lg:from-black lg:to-white lg:bg-clip-text lg:text-transparent
+            lg:text-xl
+
+            md:bg-gradient-to-t md:from-black md:to-white md:bg-clip-text md:text-transparent
+            md:text-2xl
+
+            text-lg
+            `}>
               Crafted with precision, every detail is designed to inspire and delight.
             </p>
+            </div>
           </SmoothTransition.Section>
           <SmoothTransition.Section
             id="section3"
-            backgroundColor="w-full"
+            backgroundColor="w-full backdrop-blur-xs"
             textColor="text-white"
           >
-            <div className={`m-12
-            w-full rounded-xl 
-            flex justify-center items-center h-full
-            border-white border-2 backdrop-blur-sm
-            `}>
-              <HeroCard />
-            </div>
+            <HeroCard />
+          </SmoothTransition.Section>
+          <SmoothTransition.Section
+            id="section4"
+            backgroundColor=""
+            textColor="text-white"
+          >
+            <TechStack />
           </SmoothTransition.Section>
           <SmoothTransition.Section
             id="section5"
@@ -146,16 +180,18 @@ export default function Home() {
           >
             <div
               className={`
-    w-full max-w-4xl mx-auto p-6 md:p-8 h-lvh
-    rounded-2xl border border-white/10
-    backdrop-blur-md text-white flex flex-col gap-6 shadow-xl
-  `}
+              w-full max-w-4xl mx-auto p-6 md:p-8 h-lvh
+              rounded-2xl
+              text-white gap-12 flex flex-col justify-evenly items-center
+              `}
             >
-              {apps.map((a, i) => (
-                <AppCard {...a} key={i} />
-              ))}
+              <div className="flex flex-col gap-6" >
+                {apps.map((a, i) => (
+                  <AppCard {...a} key={i} />
+                ))}
+              </div>
+              <TechDisplay github linkedin gmail centered label={false} />
             </div>
-
           </SmoothTransition.Section>
         </SmoothTransition>
       </BlackSnowBackground>
