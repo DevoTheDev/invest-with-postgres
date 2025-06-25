@@ -53,7 +53,6 @@ export const ExerciserProvider = ({ children }: { children: React.ReactNode }) =
     },
   });
 
-  console.log(movements);
   // Fetch exerciser
   const fetchExerciser = useCallback(async (): Promise<void> => {
     setFetchLoading(true);
@@ -107,10 +106,6 @@ export const ExerciserProvider = ({ children }: { children: React.ReactNode }) =
       setFetchLoading(false);
     }
   }, [user, fetchExerciser, fetchMovements]);
-
-  useEffect(() => {
-    console.log("WHAT UR LOOKIN FER : ", exerciser);
-  }, [exerciser]);
 
   // Update exerciser
   const updateExerciser = useCallback(async (data: Partial<Exerciser>): Promise<void> => {
