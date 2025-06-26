@@ -42,7 +42,11 @@ const techSections = [
   },
 ];
 
-const TechStack = () => {
+interface TechStackProps {
+  size?: number;
+}
+
+const TechStack = (props: TechStackProps) => {
   const [visibleSections, setVisibleSections] = useState<number>(0);
 
   useEffect(() => {
@@ -58,12 +62,11 @@ const TechStack = () => {
 
   return (
     <div className={`
-    h-max items-center 
-    rounded-3xl p-12 gap-1
+    h-max w-full items-center flex flex-col
+    rounded-3xl p-12 gap-2
     hover:scale-101 transition-transform hover:shadow-xl
-    duration-200 backdrop-blur-xs w-3/4
+    duration-200 backdrop-blur-xs
     `}>
-    <h1 className="text-black/40 text-4xl w-full justify-end flex font-bold">Stack</h1>
       {techSections.map((section, index) => (
         <motion.div
           key={section.label}
@@ -76,7 +79,7 @@ const TechStack = () => {
             {section.label}
           </h2>
           <hr className="border-t border-black/20 w-full" />
-          <TechDisplay {...section.props} size={40} />
+          <TechDisplay {...section.props} size={props.size} gap="gap-1" />
         </motion.div>
       ))}
     </div>
