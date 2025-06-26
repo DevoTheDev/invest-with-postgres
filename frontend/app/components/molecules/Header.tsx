@@ -1,6 +1,6 @@
 "use client";
 import React, { useState } from "react";
-import Navigation from "./Navigation";
+import Navigation from "../Navigation/Navigation";
 import { useProfile } from "../../hooks/useProfile";
 import { useRouter } from "next/navigation";
 import ColoredText from "../atoms/ColoredText";

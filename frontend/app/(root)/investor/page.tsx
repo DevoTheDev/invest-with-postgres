@@ -21,12 +21,12 @@ const page = (props: Props) => {
   }
 
   return (
-    <div className='gap-8 overflow-x-scroll  h-screen'>
-      <div className='grid grid-cols-1 gap-4 w-max' >
+    <div className=''>
+      <div className='' >
         {Object.entries(investor!).map(([k, v], i) => {
           if(typeof v === "object") {
             return (
-              <div key={i} className='flex flex-col p-4 bg-black/10 rounded-xl'>
+              <div key={i} className=''>
                 <span>{formatHeader(k)}</span>
               <hr className='border border-black/20' ></hr>
 

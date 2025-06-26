@@ -19,15 +19,17 @@ interface DynamicConfig {
       focus: 'focus:',
     };
   
-    return Object.entries(props)
-      .flatMap(([key, value]) => {
-        if (!value) return [];
-        const prefix = prefixMap[key as keyof DynamicConfig];
-        return value
-          .split(" ")
-          .map((cls: any) => `${prefix}${cls}`);
-      })
-      .join(" ");
+    const x = Object.entries(props)
+    .flatMap(([key, value]) => {
+      if (!value) return [];
+      const prefix = prefixMap[key as keyof DynamicConfig];
+      return value
+        .split(" ")
+        .map((cls: any) => `${prefix}${cls}`);
+    })
+    .join(" ");
+
+    return x;
   };
   
   export default DynamicStyling;

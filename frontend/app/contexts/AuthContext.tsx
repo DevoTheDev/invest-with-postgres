@@ -124,6 +124,15 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
+  if(!user) {
+    const stored = localStorage.getItem("user");
+    if(!stored) {
+      router.push("pages/sign-in");
+    } else {
+      console.log("User in local storage: ", stored);
+    }
+  }
+
   return (
     <AuthContext.Provider
       value={{

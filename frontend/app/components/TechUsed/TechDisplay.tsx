@@ -185,15 +185,15 @@ const TechDisplay: React.FC<TechDisplayProps> = (props) => {
     if(label) {
       const labeledStyles = {
         container: `
-        flex justify-center items-center text-center 
-        gap-2 px-6 py-2 rounded-3xl
-        hover:scale-110 transition-transform hover:shadow-xl
+        flex justify-evenly items-center text-center 
+        py-2 px-4 rounded-3xl
+        hover:scale-105 w-3/4 transition-transform hover:shadow-xl
         duration-200 hover:bg-white/70 cursor-pointer
       `,
         link: `
-        hover:opacity-75 rounded-full
+        hover:opacity-75 rounded-full h-full w-1/2 flex justify-center
         `,
-        label: "text-black/50 text-sm font-semibold"
+        label: "text-black/50 text-sm font-semibold w-full h-full text-center"
       }
       return (
         <div key={data.key} 
@@ -240,7 +240,7 @@ const TechDisplay: React.FC<TechDisplayProps> = (props) => {
   }
 
   return (
-    <div className="flex justify-start gap-4 flex-wrap">
+    <div className={`items-start grid grid-cols-3 ${gap}`}>
       {selected.map((tech) => {
         return labeledLogo(tech);
       })}

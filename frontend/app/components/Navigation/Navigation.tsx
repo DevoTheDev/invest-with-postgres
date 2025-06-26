@@ -5,7 +5,7 @@ import { formatRoute } from '../../utils/stringUtils';
 import Logout from '../atoms/Logout';
 import BlackSnowBackground from '../backgrounds/BlackSnowBackground';
 
-const routes = ["investor", "market", "fitness", "settings", "sandbox"];
+const routes = ["investor", "market", "fitness", "settings", "sandbox", "/"];
 
 const Navigation = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) => {
   const router = useRouter();
@@ -38,6 +38,7 @@ const Navigation = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => void 
                 router.push(`/${route}`);
                 onClose();
               };
+              const home = route === "/";
 
               return (
                 <button
@@ -49,7 +50,7 @@ const Navigation = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => void 
                   shadow hover:shadow-lg cursor-pointer
                 `}
                 >
-                  {formatRoute(route)}
+                  {home ? "Home" : formatRoute(route)}
                 </button>
               );
             })}
