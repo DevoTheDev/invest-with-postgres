@@ -1,7 +1,6 @@
-// components/Modal.tsx
 "use client";
-import React from "react";
-import XButton from "../molecules/XButton";
+import React, { useEffect, useState } from "react";
+import ParticleBackground from "../backgrounds/ParticleBackground";
 
 type ModalProps = {
   isOpen: boolean;
@@ -17,28 +16,41 @@ interface ModalStyles {
 }
 
 const defaultStyles: ModalStyles = {
-  overlay: "fixed inset-0 z-50 flex items-center justify-center bg-opacity-20 backdrop-blur-md",
-  wrapper: "relative bg-gray-900 rounded-2xl p-6 shadow-2xl w-[90%] max-w-2xl max-h-[80%] overflow-y-auto text-white ring-1 ring-gray-700",
+  overlay: "fixed inset-0 z-50 flex w-full items-center justify-center bg-white/80 backdrop-blur-2xl",
+  wrapper: "relative rounded-2xl p-6  w-2/3 overflow-y-auto text-white transition-all duration-300 ease-in-out transform",
   closeButton: "",
 };
 
 const Modal: React.FC<ModalProps> = ({ isOpen, onClose, children, styles = {} }) => {
-  if (!isOpen) return null;
+  const [showModal, setShowModal] = useState(false);
+
+  useEffect(() => {
+    let timeout: NodeJS.Timeout;
+    if (isOpen) {
+      setShowModal(true);
+    } else {
+      timeout = setTimeout(() => setShowModal(false), 300); // match duration
+    }
+    return () => clearTimeout(timeout);
+  }, [isOpen]);
+
+  if (!showModal && !isOpen) return null;
 
   const mergedStyles = { ...defaultStyles, ...styles };
 
   return (
-    <div
-      className={mergedStyles.overlay}
-    >
-      <div
-        className={mergedStyles.wrapper}>
+    <ParticleBackground flakeColor="black" flakeCount={1200} direction="down" className="h-full"> 
+    <div className={`${mergedStyles.overlay} transition-opacity duration-300 ease-in-out ${isOpen ? "opacity-100" : "opacity-0 pointer-events-none"}`}>
+      <div className={`${mergedStyles.wrapper} ${isOpen ? "opacity-100 scale-100" : "opacity-0 scale-95"}`}>
         {children}
+        <button
+          onClick={onClose}
+          className="absolute top-4 right-4 z-10 bg-red-500 hover:bg-red-600 text-white text-sm px-3 py-1 rounded transition">
+          Close
+        </button>
       </div>
-      <button
-        onClick={onClose}
-        className="bg-red-400 px2 py-1 rounded-md"  >Close</button>
     </div>
+            </ParticleBackground>
   );
 };
 

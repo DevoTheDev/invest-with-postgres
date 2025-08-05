@@ -43,7 +43,7 @@ export const validToken = async (token: string): Promise<boolean> => {
     axios.defaults.headers.common["Authorization"] = `Bearer ${newToken}`;
     return true;
   } catch (err: any) {
-    console.error("Token validation error:", err.response?.data?.message || err.message);
+    console.log("Token validation error:", err.response?.data?.message || err.message);
     localStorage.removeItem("token");
     return false;
   }

@@ -67,3 +67,22 @@ export const formatDateTime = (dateStr?: string): string => {
     minute: '2-digit'
   });
 };
+
+
+export function generateRandomId(
+  length: number = 8,
+  options?: {
+    prefix?: string;
+    suffix?: string;
+  }
+): string {
+  const charset = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+  let id = "";
+  for (let i = 0; i < length; i++) {
+    const randomIndex = Math.floor(Math.random() * charset.length);
+    id += charset[randomIndex];
+  }
+
+  const { prefix = "", suffix = "" } = options || {};
+  return `${prefix}${id}${suffix}`;
+}

@@ -4,6 +4,10 @@ export type HideOptions<T extends object> = {
   [K in keyof T as `hide_${Capitalize<string & K>}`]?: boolean;
 };
 
+export type UseOptions<T extends object> = {
+  [K in keyof T]?: boolean;
+};
+
 export type TailwindOptions<T extends object> = {
   container_style?: string;
   key_container_style?: string,
@@ -19,7 +23,7 @@ export type TailwindOptions<T extends object> = {
   };
 }
 
-export const targeted = (targeting: any, key?: string,) => {
+export const targeted = (targeting: any, key?: string) => {
 
   const hide = targeting[`hide_${capitalize(key)}` as string] as boolean;
   const containerStyle = targeting["container_style" as string] as string;

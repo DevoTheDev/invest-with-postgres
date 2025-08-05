@@ -1,78 +1,45 @@
-import React, { useEffect } from 'react';
-import { useInView } from 'react-intersection-observer';
-import { motion, useAnimation, AnimationDefinition } from 'framer-motion';
-import clsx from 'clsx';
+"use client";
+import React from "react";
+import { motion } from "framer-motion";
 
 interface SectionProps {
   id: string;
-  backgroundColor?: string;
-  textColor?: string;
   children: React.ReactNode;
-  scrollDirection?: 'horizontal' | 'vertical';
 }
 
-const Section: React.FC<SectionProps> = ({ id, backgroundColor = 'bg-white', textColor = 'text-black', children, scrollDirection = 'vertical' }) => {
-  const controls = useAnimation();
-  const [ref, inView] = useInView({
-    threshold: 0.2,
-    triggerOnce: false,
-  });
-
-  useEffect(() => {
-    const animation: AnimationDefinition = {
-      opacity: inView ? 1 : 0,
-      ...(scrollDirection === 'horizontal' ? { x: inView ? 0 : 50 } : { y: inView ? 0 : 1 }),
-      transition: {
-        duration: 1.8, // slowed down
-        ease: [0.22, 1, 0.36, 1], // smoother easing
-      },
-    };
-
-    controls.start(animation);
-  }, [inView, controls, scrollDirection]);
-
+const Section: React.FC<SectionProps> = ({ id, children }) => {
   return (
     <motion.section
-      ref={ref}
       id={id}
-      className={clsx(
-        'flex items-center justify-center snap-start',
-        scrollDirection === 'horizontal' ? 'min-w-full h-screen' : 'w-full h-lvh',
-        backgroundColor
-      )}
-      initial={{ opacity: 0, [scrollDirection === 'horizontal' ? 'x' : 'y']: 50 }}
-      animate={controls}
+      variants={{
+        hidden: { opacity: 0, y: 40 },
+        visible: {
+          opacity: 1,
+          y: 0,
+          transition: {
+            duration: 0.8,
+            ease: [0.22, 1, 0.36, 1],
+          },
+        },
+      }}
+      initial="hidden"
+      whileInView="visible"
+      viewport={{ once: true, amount: 0.2 }}
+      className="w-full min-h-screen flex items-center justify-center snap-start"
     >
-      <div className={clsx(`
-      flex
-      text-center items-center
-       justify-center w-full h-screen`, textColor)}>
+      <div className="w-full flex items-center justify-center">
         {children}
       </div>
     </motion.section>
   );
 };
 
-interface SmoothTransitionProps {
-  children: React.ReactNode;
-  scrollDirection?: 'horizontal' | 'vertical';
-}
-
-const SmoothTransition: React.FC<SmoothTransitionProps> & { Section: typeof Section } = ({ children, scrollDirection = 'vertical' }) => {
+const SmoothTransition: React.FC<{ children: React.ReactNode }> & {
+  Section: typeof Section;
+} = ({ children }) => {
   return (
-    <div
-      className={clsx(
-        'scroll-container',
-        scrollDirection === 'horizontal'
-          ? 'overflow-x-auto flex snap-x w-full h-screen'
-          : 'overflow-y-auto snap-y snap-mandatory scroll-smooth w-full h-screen'
-      )}
-    >
-      {React.Children.map(children, (child) =>
-        React.isValidElement<SectionProps>(child)
-          ? React.cloneElement<SectionProps>(child, { scrollDirection } as Partial<SectionProps>)
-          : child
-      )}
+    <div className="w-full h-screen overflow-y-scroll scroll-smooth snap-y snap-mandatory">
+      {children}
     </div>
   );
 };

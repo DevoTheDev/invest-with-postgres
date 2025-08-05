@@ -3,29 +3,9 @@
 "use client";
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import AlphaVantage from '../controllers/alphaVantageController';
-import { Ticker } from '../components/atoms/TickerLabel';
+import { Investment, Stock, Ticker } from '../types/Investor';
 
-export type Company = Ticker & {
-  name: string;
-  marketCap?: number;
-  sector?: string;
-};
-export type Stock = Company & {
-  sharePrice: number;
-  shareCount: number;
-  movement: {
-    intraday: number | string | any; // Allow intraday to store API response object
-    daily: number | string;
-    weekly: number | string;
-    monthly: number | string;
-    quarterly: number | string;
-  };
-};
-export type Investment = Stock & {
-  sharesOwned: number;
-};
-
-export type MarketTypes = Ticker | Company | Stock | Investment;
+export type MarketTypes = Ticker | Stock | Investment;
 
 type MarketContextType = {
   selection: Partial<MarketTypes> | null;

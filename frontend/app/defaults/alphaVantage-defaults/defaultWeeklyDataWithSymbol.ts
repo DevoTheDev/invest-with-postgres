@@ -1,5 +1,4 @@
 /*
-
 Get Weekly Data
 
 Route: /weekly
@@ -12,12 +11,36 @@ symbol (required): The stock symbol (e.g., AAPL).
 
 datatype (optional): The response format (e.g., json, csv).
 
-Example URL: {{ericInvestUrl}}/api/alpha-vantage/weekly?symbol=AAPL&datatype=json
-
+Example URL: 
+{{ericInvestUrl}}/api/alpha-vantage/weekly?symbol=AAPL&datatype=json
 
 */
 
-const apple = {
+export interface WeeklyMetaData {
+  '1. Information': string;
+  '2. Symbol': string;
+  '3. Last Refreshed': string; // Format: YYYY-MM-DD
+  '4. Time Zone': string;      // e.g., "US/Eastern"
+}
+
+export interface WeeklyOHLCV {
+  '1. open': string;
+  '2. high': string;
+  '3. low': string;
+  '4. close': string;
+  '5. volume': string;
+}
+
+export interface WeeklyTimeSeries {
+  [date: string]: WeeklyOHLCV; // Format: YYYY-MM-DD
+}
+
+export interface WeeklyTimeSeriesResponse {
+  'Meta Data': WeeklyMetaData;
+  'Weekly Time Series': WeeklyTimeSeries;
+}
+
+export const defaultWeeklyResponse: WeeklyTimeSeriesResponse = {
     "Meta Data": {
         "1. Information": "Weekly Prices (open, high, low, close) and Volumes",
         "2. Symbol": "AAPL",
@@ -35479,11 +35502,4 @@ const nvidia = {
             "5. volume": "4063800"
         }
     }
-}
-
-export default {
-    apple,
-    microsoft,
-    google,
-    nvidia
 }

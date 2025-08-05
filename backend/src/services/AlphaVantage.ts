@@ -400,14 +400,20 @@ export async function fetchAnalyticsFixedWindow({
   }
 
   const API_KEY = await getSecret('alpha_vantage_key');
-  const params = new URLSearchParams({
-    function: 'ANALYTICS_FIXED_WINDOW',
-    symbols,
-    range,
-    interval,
-    calculations,
-    apikey: API_KEY
-  });
+  const params = new URLSearchParams();
+params.set('function', 'ANALYTICS_FIXED_WINDOW');
+params.set('SYMBOLS', symbols); // <-- note uppercase
+params.set('INTERVAL', interval);
+params.set('CALCULATIONS', calculations);
+params.set('apikey', API_KEY);
+
+// Support multiple RANGE values (start and end)
+if (Array.isArray(range)) {
+  range.forEach(r => params.append('RANGE', r));
+} else {
+  params.append('RANGE', range);
+}
+
 
   const url = `https://www.alphavantage.co/query?${params.toString()}`;
   logMessage('info', `Fetching analytics for symbols: ${symbols}`);

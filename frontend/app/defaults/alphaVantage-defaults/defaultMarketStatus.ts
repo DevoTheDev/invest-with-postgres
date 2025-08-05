@@ -11,7 +11,22 @@ Example URL: {{ericInvestUrl}}/api/alpha-vantage/market-status
 
 */
 
-export const defaultMarketStatus = {
+export type MarketStatus = {
+    market_type: string; // e.g. "Equity"
+    region: string; // e.g. "United States"
+    primary_exchanges: string; // e.g. "NASDAQ, NYSE, AMEX, BATS"
+    local_open: string; // e.g. "09:30"
+    local_close: string; // e.g. "16:15"
+    current_status: "open" | "closed"; // strict status typing
+    notes: string; // optional notes, could be empty
+  };
+  
+  export type MarketStatusResponse = {
+    endpoint: string; // e.g. "Global Market Open & Close Status"
+    markets: MarketStatus[];
+  };
+
+export const defaultMarketStatus: MarketStatusResponse = {
     "endpoint": "Global Market Open & Close Status",
     "markets": [
         {

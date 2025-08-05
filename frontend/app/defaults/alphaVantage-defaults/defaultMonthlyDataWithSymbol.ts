@@ -12,13 +12,36 @@ symbol (required): The stock symbol (e.g., AAPL).
 
 datatype (optional): The response format (e.g., json, csv).
 
-Example URL: {{ericInvestUrl}}/api/alpha-vantage/monthly?symbol=AAPL&datatype=json
-
-
+Example URL: 
+{{ericInvestUrl}}/api/alpha-vantage/monthly?symbol=AAPL&datatype=json
 
 */
 
-const apple = {
+export interface MonthlyMetaData {
+    '1. Information': string;
+    '2. Symbol': string;
+    '3. Last Refreshed': string; // Format: YYYY-MM-DD
+    '4. Time Zone': string;      // e.g., "US/Eastern"
+  }
+  
+  export interface MonthlyOHLCV {
+    '1. open': string;
+    '2. high': string;
+    '3. low': string;
+    '4. close': string;
+    '5. volume': string;
+  }
+  
+  export interface MonthlyTimeSeries {
+    [date: string]: MonthlyOHLCV; // Format: YYYY-MM-DD
+  }
+  
+  export interface MonthlyTimeSeriesResponse {
+    'Meta Data': MonthlyMetaData;
+    'Monthly Time Series': MonthlyTimeSeries;
+  }
+  
+  export const defaultMonthlyResponse: MonthlyTimeSeriesResponse = {
     "Meta Data": {
         "1. Information": "Monthly Prices (open, high, low, close) and Volumes",
         "2. Symbol": "AAPL",
@@ -8201,11 +8224,4 @@ const nvidia = {
             "5. volume": "10244900"
         }
     }
-}
-
-export default {
-    apple,
-    microsoft,
-    google,
-    nvidia,
 }

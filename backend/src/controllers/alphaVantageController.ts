@@ -200,12 +200,14 @@ export const getHistoricalOptions = async (req: Request, res: Response): Promise
       return;
     }
 
+    
     const data = await fetchHistoricalOptions({
       symbol: symbol as string,
       date: date as string | undefined,
       datatype: datatype as 'json' | 'csv' | undefined
     });
-
+    
+    console.log(data)
     res.json(data);
   } catch (error: any) {
     res.status(500).json({ error: error.message || 'Error fetching historical options' });

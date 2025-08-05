@@ -13,6 +13,21 @@ Example URL: {{ericInvestUrl}}/api/alpha-vantage/insider-transactions?symbol=AAP
 
 */
 
+export type InsiderTransaction = {
+    transaction_date: string; // e.g. "2025-04-02"
+    ticker: string; // e.g. "AAPL"
+    executive: string; // e.g. "WILLIAMS, JEFFREY E"
+    executive_title: string; // e.g. "COO"
+    security_type: string; // e.g. "Common Stock"
+    acquisition_or_disposal: "A" | "D"; // A = Acquisition, D = Disposal
+    shares: string; // Could be parsed into a number
+    share_price: string; // Could be parsed into a number
+  };
+  
+  export type InsiderTransactionsResponse = {
+    data: InsiderTransaction[];
+  };
+
 export const defaultInsiderTransactions = {
     "data": [
         {

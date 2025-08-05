@@ -33,36 +33,60 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   useEffect(() => {
     (async () => {
-      const resolvedBaseUrl = await AuthController.testApiConnection();
-      setApiBaseUrl(resolvedBaseUrl);
+      try {
+        // Set API base URL
+        const resolvedBaseUrl = await AuthController.testApiConnection();
+        setApiBaseUrl(resolvedBaseUrl);
 
-      const savedToken = localStorage.getItem("token");
-      const savedUser = localStorage.getItem("user");
+        // Only access localStorage in browser
+        if (typeof window !== "undefined") {
+          const savedToken = localStorage.getItem("token");
+          const savedUser = localStorage.getItem("user");
 
-      if (savedToken && savedUser) {
-        const isValid = await AuthController.validToken(savedToken);
-        if (isValid) {
-          setToken(savedToken);
-          setUser(JSON.parse(savedUser));
-          axios.defaults.headers.common["Authorization"] = `Bearer ${savedToken}`;
-        } else {
-          logout();
+          if (savedToken && savedUser) {
+            try {
+              const isValid = await AuthController.validToken(savedToken);
+              if (isValid) {
+                setToken(savedToken);
+                setUser(JSON.parse(savedUser));
+                axios.defaults.headers.common["Authorization"] = `Bearer ${savedToken}`;
+              } else {
+                logout();
+                router.push("/pages/sign-in"); // Redirect if token is invalid
+              }
+            } catch (err) {
+              console.error("Error parsing user from localStorage:", err);
+              logout();
+              router.push("/pages/sign-in");
+            }
+          } else {
+            router.push("/pages/sign-in"); // Redirect if no token or user
+          }
         }
+      } catch (err) {
+        console.error("Error initializing auth:", err);
+        setError("Failed to initialize authentication");
+      } finally {
+        setAuthLoading(false);
       }
-
-      setAuthLoading(false);
     })();
-  }, []);
-
+  }, [router]);
 
   const login = async (props: SignIn) => {
-    const res = await AuthController.login(props);
-    setToken(res.token);
-    setUser(res.user);
-    localStorage.setItem("token", res.token);
-    localStorage.setItem("user", JSON.stringify(res.user));
-    axios.defaults.headers.common["Authorization"] = `Bearer ${res.token}`;
-    return res;
+    try {
+      setError(null);
+      const res = await AuthController.login(props);
+      setToken(res.token);
+      setUser(res.user);
+      localStorage.setItem("token", res.token);
+      localStorage.setItem("user", JSON.stringify(res.user));
+      axios.defaults.headers.common["Authorization"] = `Bearer ${res.token}`;
+      return res;
+    } catch (err: any) {
+      const errorMessage = err.response?.data?.message || "Login failed";
+      setError(errorMessage);
+      throw new Error(errorMessage);
+    }
   };
 
   const register = async (props: SignIn) => {
@@ -99,15 +123,18 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     return await AuthController.validToken(token);
   };
 
-  const logout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
+  const logout = (redirectTo: string = "/") => {
+    if (typeof window !== "undefined") {
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
+    }
     delete axios.defaults.headers.common["Authorization"];
     setToken(null);
     setUser(null);
     setError(null);
-    router.push("/");
+    router.push(redirectTo);
   };
+  
 
   const deleteUser = async () => {
     if (!token || !user?.id) {
@@ -124,14 +151,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  if(!user) {
-    const stored = localStorage.getItem("user");
-    if(!stored) {
-      router.push("pages/sign-in");
-    } else {
-      console.log("User in local storage: ", stored);
+  useEffect(() => {
+    if (!authLoading && user === null) {
+      logout();
     }
-  }
+  }, [authLoading, user]);
+  
 
   return (
     <AuthContext.Provider
