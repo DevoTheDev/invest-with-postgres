@@ -1,48 +1,39 @@
 "use client";
-import ColoredText from "./components/atoms/ColoredText";
-import HeroCard from "./components/atoms/HeroCard";
-import MovementCard from "./components/atoms/MovementCard";
-import TechDisplay from "./components/TechUsed/TechDisplay";
+import ColoredText from "./components/atoms/ColoredText"
 import BlackSnowBackground from "./components/backgrounds/BlackSnowBackground";
-import Header from "./components/molecules/Header";
 import SmoothTransition from "./components/sections/SmoothTransition";
-import { useExerciser } from "./hooks/useExerciser";
-import { useRouter } from "next/navigation";
-import { motion } from "framer-motion";
-import TechStack from "./components/TechUsed/TechStack";
-import MyApps from "./components/presentation/MyApps";
-import MyTitlePage from "./components/presentation/MyTitlePage";
-
+import MyApps from "./components/me/MyApps";
+import HeroCardMobile from "./components/me/HeroCard/HeroCardMobile";
 
 export default function Home() {
-  const { movements } = useExerciser();
-  const router = useRouter();
-
-
-
   return (
     <div>
       <BlackSnowBackground backgroundClassName="bg-gradient-to-b from-white via-gray-100 to-black">
-        <SmoothTransition scrollDirection="vertical" >
-          <SmoothTransition.Section
-            id="section1"
-            backgroundColor=""
-            textColor="text-white"
-          >
-            <MyTitlePage />
+        <SmoothTransition>
+          <SmoothTransition.Section id="intro">
+            <div className="flex text-center justify-center">
+              <ColoredText
+                colors={['#000000', '#FFFFFF', '#FFFFFF']} // black → dark grey → white
+                size="text-5xl"
+                weight="font-extrabold"
+                shadow={false}
+              >
+                Dev
+              </ColoredText>
+              <ColoredText
+                colors={['#FFFFFF', '#FFFFFF', '#000000']} // white → light grey → black
+                size="text-5xl"
+                weight="font-extrabold"
+                shadow={true}
+              >
+                Element
+              </ColoredText>
+            </div>
           </SmoothTransition.Section>
-          <SmoothTransition.Section
-            id="section2"
-            backgroundColor="w-full backdrop-blur-xs"
-            textColor="text-white"
-          >
-            <HeroCard />
+          <SmoothTransition.Section id="experience">
+            <HeroCardMobile />
           </SmoothTransition.Section>
-          <SmoothTransition.Section
-            id="section3"
-            backgroundColor=""
-            textColor="text-white"
-          >
+          <SmoothTransition.Section id="apps">
               <MyApps />
           </SmoothTransition.Section>
         </SmoothTransition>

@@ -1,4 +1,22 @@
-export const defaultStockQuote = {
+export interface GlobalQuote {
+    "01. symbol": string;
+    "02. open": string;
+    "03. high": string;
+    "04. low": string;
+    "05. price": string;
+    "06. volume": string;
+    "07. latest trading day": string; // Format: YYYY-MM-DD
+    "08. previous close": string;
+    "09. change": string;
+    "10. change percent": string;     // e.g., "-7.2887%"
+  }
+  
+  export interface StockQuoteResponse {
+    "Global Quote": GlobalQuote;
+  }
+  
+
+export const defaultStockQuote: StockQuoteResponse = {
     "Global Quote": {
         "01. symbol": "AAPL",
         "02. open": "193.8900",

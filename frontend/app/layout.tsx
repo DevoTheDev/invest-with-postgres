@@ -34,17 +34,17 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <ReactQueryProvider>
-          <AuthProvider>
-            <ProfileProvider>
-              <InvestorProvider>
-                <ExerciserProvider>
-                  <MarketProvider>
-                    {children}
-                  </MarketProvider>
-                </ExerciserProvider>
-              </InvestorProvider>
-            </ProfileProvider>
-          </AuthProvider>
+            <AuthProvider>
+              <ProfileProvider>
+                <InvestorProvider>
+                  <ExerciserProvider>
+                    <MarketProvider>
+                      {children}
+                    </MarketProvider>
+                  </ExerciserProvider>
+                </InvestorProvider>
+              </ProfileProvider>
+            </AuthProvider>
         </ReactQueryProvider>
       </body>
     </html>

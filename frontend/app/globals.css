@@ -29,7 +29,53 @@
       background-position: 0% 50%;
     }
   }
+
+  /* TABLET COVERAGE */
+
+
+  @media (max-width: 1220px) {
+    .small-text {
+      font-size: 12px;
+    }
+    .tablet-pad-width {
+      width: 80%;
+    }
+  }
+  /* MOBILE COVERAGE */
+
+  @media (max-width: 539px) {
+    .tiny-text {
+      font-size: 9px;
+    }
+    .mobile-flex-col {
+      display: flex;
+      /* flex-direction: column; */
+      width: 100%;
+    }
+    .mobile-pad-width {
+      width: 90%;
+    }
+    .w-custom-mobile {
+      width: 100% !important;
+      font-size: 14px;
+    }
+    .mobile-tech-stack {
+     display: grid;
+     grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .mobile-resume {
+      padding-inline: calc(var(--spacing) * 6)
+    }
+    .mobile-res-title {
+      font-size: var(--text-2xl) /* 2.25rem = 36px */;
+    line-height: var(--tw-leading, var(--text-2xl--line-height));
+    }
+  }
+
 }
+
+
 
 /* Make snap scroll slower and less aggressive */
 .scroll-container {

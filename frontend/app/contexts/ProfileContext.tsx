@@ -132,7 +132,7 @@ export const ProfileProvider = ({ children }: { children: React.ReactNode }) => 
     if (error) return <p className="text-red-600 font-medium">Error: {error}</p>;
 
     return (
-      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col w-2/3 gap-8 bg-white p-8 rounded-xl shadow-lg  mx-auto">
+      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col max-w-3xl gap-8 bg-white p-8 rounded-xl shadow-lg  mx-auto">
         {/* Personal Info Section */}
         <div className="space-y-6">
           <h2 className="text-xl font-semibold text-gray-800 border-b pb-2">Personal Information</h2>
