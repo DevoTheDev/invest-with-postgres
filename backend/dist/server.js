@@ -22,7 +22,7 @@ require("reflect-metadata");
 // const programsRoutes_1 = __importDefault(require("../src/routes/exerciser-routes/programsRoutes"));
 const investmentsRoutes_1 = __importDefault(require("./routes/investor-routes/investmentsRoutes"));
 const app = (0, express_1.default)();
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT || 4004;
 app.use((0, cors_1.default)({
     origin: "http://localhost:3000",
     credentials: true

@@ -19,7 +19,7 @@ import investmentsRoutes from "./routes/investor-routes/investmentsRoutes";
 
 
 const app = express();
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT || 4004;
 
 app.use(cors({
     origin: "http://localhost:3000",
