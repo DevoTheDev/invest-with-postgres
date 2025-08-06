@@ -129,6 +129,6 @@ ${hasContext ? `${color}${internalSeparator(boxWidth, color)}${colors.reset}\n${
 ${color}║${' '.repeat(innerWidth + 2)}║${colors.reset}
 ${color}${solidBorder(boxWidth, color, false)}${colors.reset}
 `;
-    console.log(formattedMessage);
+    console.log(message);
 };
 exports.logMessage = logMessage;

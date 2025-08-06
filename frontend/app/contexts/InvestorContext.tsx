@@ -17,6 +17,8 @@ import { formatHeader } from "../utils/stringUtils";
 
 type InvestorContextType = {
   investor: Investor | null;
+  investing: boolean;
+  setInvesting: React.Dispatch<React.SetStateAction<boolean>>;
   fetchLoading: boolean;
   updateLoading: boolean;
   selection: Partial<Stock> | null;
@@ -34,6 +36,8 @@ type InvestorContextType = {
 
 export const InvestorContext = createContext<InvestorContextType>({
   investor: null,
+  investing: false,
+  setInvesting: () => {},
   fetchLoading: true,
   updateLoading: false,
   selection: null,
@@ -51,6 +55,7 @@ export const InvestorContext = createContext<InvestorContextType>({
 
 export const InvestorProvider = ({ children }: { children: React.ReactNode }) => {
   const [investor, setInvestor] = useState<Investor | null>(null);
+  const [investing, setInvesting] = useState<boolean>(false);
   const [fetchLoading, setFetchLoading] = useState(true);
   const [updateLoading, setUpdateLoading] = useState(false);
   const [selection, setSelection] = useState<Partial<Stock> | null>(null);
@@ -213,6 +218,7 @@ export const InvestorProvider = ({ children }: { children: React.ReactNode }) =>
 
   const clearSelection = () => {
     setSelection(null);
+    setInvesting(false);
   };
 
   const invested = (stock: Partial<Stock>) => {
@@ -223,6 +229,8 @@ export const InvestorProvider = ({ children }: { children: React.ReactNode }) =>
     <InvestorContext.Provider
       value={{
         investor,
+        investing,
+        setInvesting,
         fetchLoading,
         updateLoading,
         selection,

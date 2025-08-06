@@ -187,6 +187,7 @@ const getHistoricalOptions = (req, res) => __awaiter(void 0, void 0, void 0, fun
             date: date,
             datatype: datatype
         });
+        console.log(data);
         res.json(data);
     }
     catch (error) {

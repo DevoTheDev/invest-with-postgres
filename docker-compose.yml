@@ -1,0 +1,39 @@
+services:
+  frontend:
+    build: ./frontend
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+
+  backend:
+    build: ./backend
+    ports:
+      - "4004:4004"
+    depends_on:
+      - db
+    environment:
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_USER: devonfennell
+      DB_PASSWORD: HaHaEmMu20@%
+      DB_NAME: develement_app
+      JWT_SECRET: your-super-secret-key
+      NODE_ENV: development
+      ALPHA_VANTAGE_KEY: PL8HXL9DJH4ZSCQU
+      POLYGON_IO_KEY: PV52UC0UkhnXU0ihkvi27Bdu_YctpZeB
+
+  db:
+    image: postgres:15
+    restart: always
+    environment:
+      POSTGRES_USER: devonfennell
+      POSTGRES_PASSWORD: HaHaEmMu20@%
+      POSTGRES_DB: develement_app
+    ports:
+      - "5432:5432"
+    volumes:
+      - db-data:/var/lib/postgresql/data
+
+volumes:
+  db-data:

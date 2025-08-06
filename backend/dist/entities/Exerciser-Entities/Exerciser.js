@@ -9,20 +9,72 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Exerciser = void 0;
+exports.Exerciser = exports.Exercise = exports.Movement = exports.TrainingEmphasis = void 0;
 const typeorm_1 = require("typeorm");
-const Workout_1 = require("./Workout"); // Placeholder for future entity
+// Enum for training emphasis
+var TrainingEmphasis;
+(function (TrainingEmphasis) {
+    TrainingEmphasis["MUSCLE_SIZE"] = "muscle_size";
+    TrainingEmphasis["MUSCLE_STRENGTH"] = "muscle_strength";
+    TrainingEmphasis["MUSCLE_ENDURANCE"] = "muscle_endurance";
+    TrainingEmphasis["MUSCLE_SHAPE"] = "muscle_shape";
+})(TrainingEmphasis || (exports.TrainingEmphasis = TrainingEmphasis = {}));
+// Movement base
+class Movement {
+}
+exports.Movement = Movement;
+// Exercise extends Movement
+class Exercise extends Movement {
+}
+exports.Exercise = Exercise;
 let Exerciser = class Exerciser {
 };
 exports.Exerciser = Exerciser;
 __decorate([
-    (0, typeorm_1.PrimaryColumn)({ name: 'user_id', type: 'integer' }),
-    __metadata("design:type", Number)
+    (0, typeorm_1.PrimaryGeneratedColumn)("uuid"),
+    __metadata("design:type", String)
+], Exerciser.prototype, "id", void 0);
+__decorate([
+    (0, typeorm_1.Column)("uuid"),
+    __metadata("design:type", String)
 ], Exerciser.prototype, "user_id", void 0);
 __decorate([
-    (0, typeorm_1.OneToMany)(() => Workout_1.Workout, (workout) => workout.exerciser),
+    (0, typeorm_1.Column)({
+        type: "enum",
+        enum: TrainingEmphasis,
+        default: TrainingEmphasis.MUSCLE_SIZE,
+    }),
+    __metadata("design:type", String)
+], Exerciser.prototype, "training_emphasis", void 0);
+__decorate([
+    (0, typeorm_1.Column)("jsonb", { default: () => "'[]'" }),
     __metadata("design:type", Array)
-], Exerciser.prototype, "workouts", void 0);
+], Exerciser.prototype, "programs", void 0);
+__decorate([
+    (0, typeorm_1.Column)("float"),
+    __metadata("design:type", Number)
+], Exerciser.prototype, "height_cm", void 0);
+__decorate([
+    (0, typeorm_1.Column)("float"),
+    __metadata("design:type", Number)
+], Exerciser.prototype, "weight_kg", void 0);
+__decorate([
+    (0, typeorm_1.Column)("float"),
+    __metadata("design:type", Number)
+], Exerciser.prototype, "body_fat_percentage", void 0);
+__decorate([
+    (0, typeorm_1.Column)("float"),
+    __metadata("design:type", Number)
+], Exerciser.prototype, "weekly_workout_frequency", void 0);
+__decorate([
+    (0, typeorm_1.CreateDateColumn)(),
+    __metadata("design:type", Date)
+], Exerciser.prototype, "created_at", void 0);
+__decorate([
+    (0, typeorm_1.UpdateDateColumn)(),
+    __metadata("design:type", Date)
+], Exerciser.prototype, "updated_at", void 0);
 exports.Exerciser = Exerciser = __decorate([
-    (0, typeorm_1.Entity)('exercisers')
+    (0, typeorm_1.Entity)("exercisers"),
+    (0, typeorm_1.Index)("idx_exercisers_user_id", ["user_id"])
 ], Exerciser);

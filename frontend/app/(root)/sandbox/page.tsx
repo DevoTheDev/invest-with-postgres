@@ -1,35 +1,44 @@
 "use client";
+import Ticker from '@/app/components/investment/Stock/Ticker';
+import FlexibleCarousel from '@/app/components/shadcn/expanded/FlexibleCarousel';
+import { FlexibleChart } from '@/app/components/shadcn/expanded/FlexibleChart';
+import { stocks } from '@/app/defaults/companies/top200';
 import React from 'react';
-import Market from '@/app/components/market/Market';
-import Accordion from '@/app/components/sections/Accordian';
 
-type Props = {}
 
 const page = () => {
 
-  const sections: { title: string, children: React.ReactNode }[] = [
-    { title: "Intraday Series", children: (<Market.TimeSeries.Intraday />), },
-    { title: "Daily Series", children: (<Market.TimeSeries.Daily />), },
-    { title: "Weekly Series", children: (<Market.TimeSeries.Weekly />), },
-    { title: "Monthly Series", children: (<Market.TimeSeries.Monthly />), },
-
-
+  const sections = [
+    (
+      <div className='bg-gray-200 p-6 rounded-xl w-1/2' >
+        <Ticker stock={stocks[0]} />
+        <FlexibleChart />
+      </div>
+    ),
+    (
+      <div className='bg-gray-200 p-6 rounded-xl w-1/2' >
+        <Ticker stock={stocks[1]} />
+        <FlexibleChart />
+      </div>
+    ),
+    (
+      <div className='bg-gray-200 p-6 rounded-xl w-1/2' >
+        <Ticker stock={stocks[2]} />
+        <FlexibleChart />
+      </div>
+    ),
+    (
+      <div className='bg-gray-200 p-6 rounded-xl w-1/2' >
+        <Ticker stock={stocks[2]} />
+        <FlexibleChart />
+      </div>
+    ),
   ]
 
   return (
-    <>
-      <div className='p-12'>
-        <Accordion>
-          {sections.map((s) => {
-            return (
-              <Accordion.Section title={s.title}>
-                {s.children}
-              </Accordion.Section>
-            )
-          })}
-        </Accordion>
-      </div>
-    </>
+    <div className='flex bg-gray-900' >
+      <FlexibleCarousel sections={sections} />
+    </div>
   )
 }
 

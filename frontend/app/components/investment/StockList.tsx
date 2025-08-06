@@ -50,8 +50,8 @@ const StockList: React.FC<StockListProps> = ({ stocks, hideSearch, itemOnClick }
   });
 
   return (
-    <div className="p-4 h-max w-full">
-      {hideSearch ? null :<div className="mb-6 flex gap-4">
+    <div className="p-4 h-max w-full rounded-xl">
+      {hideSearch ? null :<div className="mb-6 flex justify-evenly gap-4">
         <select
           className="border rounded-lg p-2 bg-white shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"
           value={searchField}
@@ -70,7 +70,7 @@ const StockList: React.FC<StockListProps> = ({ stocks, hideSearch, itemOnClick }
           placeholder={`Search by ${searchField.replace(/([A-Z])/g, ' $1').toLowerCase()}`}
           value={searchTerm}
           onChange={handleSearch}
-          className="border rounded-lg p-2 w-full focus:ring-2 focus:ring-blue-500 focus:outline-none"
+          className="border rounded-lg bg-white/80 p-2 w-1/4 focus:ring-2 focus:ring-blue-500 focus:outline-none"
         />
       </div>}
       <div className={`
@@ -78,17 +78,13 @@ const StockList: React.FC<StockListProps> = ({ stocks, hideSearch, itemOnClick }
       `}>
         {filteredStocks.map((stock, index) => {
 
-          const selectStock = () => {
-            itemOnClick && itemOnClick(stock);
-          }
-
           return (
             <Stock
               key={index}
               stock={stock}
               searchField={searchField}
               searchTerm={searchTerm}
-              onClick={selectStock}
+              onClick={itemOnClick}
             />
           )
         })}

@@ -8,7 +8,6 @@ import StockList from '@/app/components/investment/StockList';
 import Modal from '@/app/components/atoms/Modal';
 import { Stock } from '@/app/types/Investor';
 import ParticleBackground from '@/app/components/backgrounds/ParticleBackground';
-import Ticker from '@/app/components/investment/Stock/Ticker';
 import Investment from '@/app/components/investment/Investment';
 
 type Props = {}
@@ -16,7 +15,7 @@ type Props = {}
 const page = (props: Props) => {
   const router = useRouter();
   const { user } = useAuth();
-  const { investor, addInvestment, makeSelection, selection, clearSelection } = useInvestor();
+  const { investor, addInvestment, makeSelection, selection, clearSelection, investing } = useInvestor();
 
   if (!investor) {
     return null
@@ -27,8 +26,8 @@ const page = (props: Props) => {
   }
 
   return (
-    <div className='flex h-max overflow-y-scroll justify-center items-center'>
-      <Modal isOpen={Boolean(selection)} onClose={clearSelection}>
+    <div className='flex h-max overflow-y-scroll justify-center items-center bg-gray-200'>
+      <Modal isOpen={investing} onClose={clearSelection}>
         <ParticleBackground flakeColor="black" flakeCount={1200} direction="down" className="h-full">
         <Investment stock={{...selection}} />
         </ParticleBackground>

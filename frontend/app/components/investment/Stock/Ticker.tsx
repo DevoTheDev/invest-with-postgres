@@ -79,11 +79,11 @@ const Ticker = (props: TickerProps): React.ReactNode => {
           </p>
         </div>
       <div className='flex'>
-        {stock.movement && (
+        {/* {stock.movement && (
           <div className='w-full' >
             <Movement mini movement={stock.movement} />
           </div>
-        )}
+        )} */}
       </div>
       </div>
     </div>

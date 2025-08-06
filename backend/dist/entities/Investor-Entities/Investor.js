@@ -9,25 +9,87 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Investor = void 0;
+exports.Investor = exports.ExperienceLevel = exports.RiskTolerance = exports.InvestmentGoal = void 0;
 const typeorm_1 = require("typeorm");
-const Watchlist_1 = require("./Watchlist");
-const Investment_1 = require("./Investment");
+var InvestmentGoal;
+(function (InvestmentGoal) {
+    InvestmentGoal["LONG_TERM_GROWTH"] = "long_term_growth";
+    InvestmentGoal["INCOME"] = "income";
+    InvestmentGoal["CAPITAL_PRESERVATION"] = "capital_preservation";
+    InvestmentGoal["SPECULATION"] = "speculation";
+})(InvestmentGoal || (exports.InvestmentGoal = InvestmentGoal = {}));
+var RiskTolerance;
+(function (RiskTolerance) {
+    RiskTolerance["LOW"] = "low";
+    RiskTolerance["MEDIUM"] = "medium";
+    RiskTolerance["HIGH"] = "high";
+})(RiskTolerance || (exports.RiskTolerance = RiskTolerance = {}));
+var ExperienceLevel;
+(function (ExperienceLevel) {
+    ExperienceLevel["BEGINNER"] = "beginner";
+    ExperienceLevel["INTERMEDIATE"] = "intermediate";
+    ExperienceLevel["EXPERIENCED"] = "experienced";
+})(ExperienceLevel || (exports.ExperienceLevel = ExperienceLevel = {}));
 let Investor = class Investor {
 };
 exports.Investor = Investor;
 __decorate([
-    (0, typeorm_1.PrimaryColumn)({ name: 'user_id', type: 'integer' }),
-    __metadata("design:type", Number)
+    (0, typeorm_1.PrimaryGeneratedColumn)("uuid"),
+    __metadata("design:type", String)
+], Investor.prototype, "id", void 0);
+__decorate([
+    (0, typeorm_1.Column)("uuid"),
+    __metadata("design:type", String)
 ], Investor.prototype, "user_id", void 0);
 __decorate([
-    (0, typeorm_1.OneToMany)(() => Watchlist_1.Watchlist, (watchlist) => watchlist.investor),
-    __metadata("design:type", Array)
-], Investor.prototype, "watchlists", void 0);
+    (0, typeorm_1.Column)({
+        type: "enum",
+        enum: InvestmentGoal,
+        default: InvestmentGoal.LONG_TERM_GROWTH,
+    }),
+    __metadata("design:type", String)
+], Investor.prototype, "investment_goal", void 0);
 __decorate([
-    (0, typeorm_1.OneToMany)(() => Investment_1.Investment, (investment) => investment.investor),
+    (0, typeorm_1.Column)({
+        type: "enum",
+        enum: RiskTolerance,
+        default: RiskTolerance.MEDIUM,
+    }),
+    __metadata("design:type", String)
+], Investor.prototype, "risk_tolerance", void 0);
+__decorate([
+    (0, typeorm_1.Column)({
+        type: "enum",
+        enum: ExperienceLevel,
+        default: ExperienceLevel.BEGINNER,
+    }),
+    __metadata("design:type", String)
+], Investor.prototype, "experience_level", void 0);
+__decorate([
+    (0, typeorm_1.Column)("integer", { default: 0 }),
+    __metadata("design:type", Number)
+], Investor.prototype, "annual_investment_budget", void 0);
+__decorate([
+    (0, typeorm_1.Column)("boolean", { default: false }),
+    __metadata("design:type", Boolean)
+], Investor.prototype, "auto_invest_enabled", void 0);
+__decorate([
+    (0, typeorm_1.Column)("text", { array: true, default: [] }),
+    __metadata("design:type", Array)
+], Investor.prototype, "watchlist", void 0);
+__decorate([
+    (0, typeorm_1.Column)("jsonb", { default: () => "'[]'" }),
     __metadata("design:type", Array)
 ], Investor.prototype, "investments", void 0);
+__decorate([
+    (0, typeorm_1.CreateDateColumn)(),
+    __metadata("design:type", Date)
+], Investor.prototype, "created_at", void 0);
+__decorate([
+    (0, typeorm_1.UpdateDateColumn)(),
+    __metadata("design:type", Date)
+], Investor.prototype, "updated_at", void 0);
 exports.Investor = Investor = __decorate([
-    (0, typeorm_1.Entity)('investors')
+    (0, typeorm_1.Entity)("investors"),
+    (0, typeorm_1.Index)("idx_investors_user_id", ["user_id"])
 ], Investor);

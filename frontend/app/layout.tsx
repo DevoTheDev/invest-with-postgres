@@ -7,6 +7,7 @@ import { MarketProvider } from "./contexts/MarketContext";
 import { InvestorProvider } from "./contexts/InvestorContext";
 import { ExerciserProvider } from "./contexts/ExerciserContext";
 import ReactQueryProvider from "./contexts/ReactQueryContext";
+import BlackSnowBackground from "./components/backgrounds/BlackSnowBackground";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -34,17 +35,17 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <ReactQueryProvider>
-            <AuthProvider>
-              <ProfileProvider>
-                <InvestorProvider>
-                  <ExerciserProvider>
-                    <MarketProvider>
-                      {children}
-                    </MarketProvider>
-                  </ExerciserProvider>
-                </InvestorProvider>
-              </ProfileProvider>
-            </AuthProvider>
+          <AuthProvider>
+            <ProfileProvider>
+              <InvestorProvider>
+                <ExerciserProvider>
+                  <MarketProvider>
+                    {children}
+                  </MarketProvider>
+                </ExerciserProvider>
+              </InvestorProvider>
+            </ProfileProvider>
+          </AuthProvider>
         </ReactQueryProvider>
       </body>
     </html>
