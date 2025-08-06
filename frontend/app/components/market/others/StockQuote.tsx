@@ -1,5 +1,5 @@
 import React from 'react';
-import { StockQuoteResponse, GlobalQuote } from '@/app/defaults/alphaVantage-defaults/defaultQuote';
+import { GlobalQuote, StockQuoteResponse } from '@/app/defaults/alphaVantage-defaults/defaultStockQuote';
 
 interface StockQuoteDisplayProps {
   data: StockQuoteResponse;

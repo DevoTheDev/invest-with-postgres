@@ -33,7 +33,7 @@ const Investment: React.FC<Props> = ({ stock }) => {
       </div>
       {/* Movement Chart */}
       <div className="w-full gap-12 flex items-center justify-center">
-          <Movement movement={movement!} />
+          {/* <Movement movement={movement!} /> */}
         <SharesCounter currentShares={0} currentPrice={sharePrice!} />
       </div>
     </div>

@@ -53,9 +53,9 @@ const AnalyticsFixedWindow: React.FC<AnalyticsFixedWindowProps> = ({ data }) => 
                       {matrixData?.index.map((symbol, rowIndex) => (
                         <tr key={symbol} className="border-b hover:bg-gray-50">
                           <td className="px-4 py-2 font-semibold">{symbol}</td>
-                          {matrixData?.[key.toLowerCase() as 'covariance' | 'correlation'][rowIndex].map((value: number, colIndex: number) => (
+                          {/* {matrixData?.[key.toLowerCase() as 'covariance' | 'correlation'][rowIndex].map((value: number, colIndex: number) => (
                             <td key={colIndex} className="px-4 py-2">{formatNumber(value)}</td>
-                          ))}
+                          ))} */}
                         </tr>
                       ))}
                     </tbody>

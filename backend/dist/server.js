@@ -16,8 +16,11 @@ const polygonIoRoutes_1 = __importDefault(require("./routes/market-routes/polygo
 const secureKeysRoutes_1 = __importDefault(require("./routes/user-routes/secureKeysRoutes"));
 const profileRoutes_1 = __importDefault(require("./routes/user-routes/profileRoutes"));
 const investorRoutes_1 = __importDefault(require("./routes/investor-routes/investorRoutes"));
+const exerciserRoutes_1 = __importDefault(require("./routes/exerciser-routes/exerciserRoutes"));
 const requestLogger_1 = require("./middleware/requestLogger");
 require("reflect-metadata");
+// const programsRoutes_1 = __importDefault(require("../src/routes/exerciser-routes/programsRoutes"));
+const investmentsRoutes_1 = __importDefault(require("./routes/investor-routes/investmentsRoutes"));
 const app = (0, express_1.default)();
 const PORT = process.env.PORT || 3001;
 app.use((0, cors_1.default)({
@@ -33,11 +36,14 @@ app.get("/api/ping", (_req, res) => {
 // Routes
 app.use("/api/users", userRoutes_1.default);
 app.use("/api/profiles", profileRoutes_1.default);
-app.use("/api/investor", investorRoutes_1.default);
 app.use("/api/secure-keys", secureKeysRoutes_1.default);
+app.use("/api/investors", investorRoutes_1.default);
+app.use("/api/investors/investments", investmentsRoutes_1.default);
 app.use("/api/market", marketRoutes_1.default);
 app.use("/api/alpha-vantage", alphaVantageRoutes_1.default);
 app.use("/api/polygon-io", polygonIoRoutes_1.default);
+app.use("/api/exercisers", exerciserRoutes_1.default);
+// app.use("/api/exercisers/programs", programsRoutes_1.default);
 // ✅ Global Error Handler (after routes)
 app.use(errorHandler_1.errorHandler);
 // Start Server
@@ -47,5 +53,5 @@ data_source_1.AppDataSource.initialize()
     app.listen(PORT, () => (0, logger_1.logMessage)("inProgress", `🔥 Waiting for requests on port ${PORT}...`));
 })
     .catch((err) => {
-    (0, logger_1.logMessage)("error", "DB Connection Error: " + err.message);
+    console.log(err);
 });

@@ -31,7 +31,7 @@ function authMiddleware(req, res, next) {
         const token = authHeader.split(' ')[1];
         try {
             const decoded = jsonwebtoken_1.default.verify(token, JWT_SECRET);
-            const user = yield userRepository.findOne({ where: { _id: decoded.userId } });
+            const user = yield userRepository.findOne({ where: { id: decoded.userId } });
             if (!user) {
                 (0, logger_1.logMessage)('error', `User not found for userId: ${decoded.userId}`);
                 res.status(404).json({ message: 'User not found.' });

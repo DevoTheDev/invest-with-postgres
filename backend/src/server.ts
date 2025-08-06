@@ -14,7 +14,7 @@ import investorRoutes from "./routes/investor-routes/investorRoutes";
 import exerciserRoutes from "./routes/exerciser-routes/exerciserRoutes";
 import { requestLogger } from "./middleware/requestLogger";
 import 'reflect-metadata';
-import programsRoutes from "../src/routes/exerciser-routes/programsRoutes";
+// import programsRoutes from "../src/routes/exerciser-routes/programsRoutes";
 import investmentsRoutes from "./routes/investor-routes/investmentsRoutes";
 
 
@@ -46,7 +46,7 @@ app.use("/api/alpha-vantage", alphaVantageRoutes);
 app.use("/api/polygon-io", polygonIoRoutes);
 
 app.use("/api/exercisers", exerciserRoutes);
-app.use("/api/exercisers/programs", programsRoutes);
+// app.use("/api/exercisers/programs", programsRoutes);
 
 
 // ✅ Global Error Handler (after routes)

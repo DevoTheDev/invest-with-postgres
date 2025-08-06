@@ -20,9 +20,9 @@ function getTickers(req, res) {
             const data = yield polygon.reference.tickers({
                 market: "stocks",
                 active: "true",
-                order: "asc",
+                order: "desc",
                 limit: 1000,
-                sort: "ticker"
+                sort: "ticker",
             });
             res.json(data);
         }

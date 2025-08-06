@@ -41,11 +41,8 @@ const dotenv = __importStar(require("dotenv"));
 const Secret_1 = require("./entities/Secret");
 const Profile_1 = require("./entities/Profile");
 const Investor_1 = require("./entities/Investor-Entities/Investor");
-const Watchlist_1 = require("./entities/Investor-Entities/Watchlist");
-const WatchlistTicker_1 = require("./entities/Investor-Entities/WatchlistTicker");
-const Investment_1 = require("./entities/Investor-Entities/Investment");
 const Exerciser_1 = require("./entities/Exerciser-Entities/Exerciser");
-const Workout_1 = require("./entities/Exerciser-Entities/Workout");
+const Movement_1 = require("./entities/Exerciser-Entities/Movement");
 dotenv.config();
 exports.AppDataSource = new typeorm_1.DataSource({
     type: "postgres",
@@ -68,7 +65,7 @@ exports.AppDataSource = new typeorm_1.DataSource({
   
     */
     logging: process.env.NODE_ENV === "development",
-    entities: [User_1.User, Secret_1.Secret, Profile_1.Profile, Investor_1.Investor, Investment_1.Investment, Watchlist_1.Watchlist, WatchlistTicker_1.WatchlistTicker, Workout_1.Workout, Exerciser_1.Exerciser],
+    entities: [User_1.User, Secret_1.Secret, Profile_1.Profile, Investor_1.Investor, Exerciser_1.Exerciser, Movement_1.Movement],
     migrations: [],
     subscribers: [],
 });

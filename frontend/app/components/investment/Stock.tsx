@@ -16,7 +16,7 @@ interface StockProps {
 }
 
 const Stock: React.FC<StockProps> = ({ stock, searchField, searchTerm, onClick }) => {
-  const { investor, invested, selection, makeSelection } = useInvestor();
+  const { investor, invested, selection, makeSelection, setInvesting } = useInvestor();
 
   const router = useRouter();
 
@@ -24,14 +24,22 @@ const Stock: React.FC<StockProps> = ({ stock, searchField, searchTerm, onClick }
     makeSelection(stock);
     router.push("/investor/detailedSelection");
   }
+  
+  const handleClick = () => {
+    setInvesting(true);
+    makeSelection(stock);
+  }
 
-  console.log(invested(stock));
-
+  React.useEffect(() => {
+    console.log(selection);
+  }, [selection]);
+  
   const InvestButton = () => {
+
     if (invested(stock)) {
       return (
         <div
-          onClick={onClick}
+          onClick={handleClick}
           className={`
         text-green-600/80 hover:bg-green-300 hover:text-white
         transition-all duration-300 transform
@@ -42,9 +50,9 @@ const Stock: React.FC<StockProps> = ({ stock, searchField, searchTerm, onClick }
     } else {
       return (
         <div
-          onClick={onClick}
+          onClick={handleClick}
           className={`
-        border-1 border-white text-gray-400
+        border border-transparent text-gray-400
         transition-all duration-300 transform hover:bg-white hover:border-green-500/80 hover:text-green-400
         font-semibold flex rounded-full items-center px-5 py-1 w-max text-sm
         `}>Invest</div>
@@ -57,6 +65,7 @@ const Stock: React.FC<StockProps> = ({ stock, searchField, searchTerm, onClick }
       border h-full w-full rounded-lg p-6 hover:scale-[1.04] 
       duration-200 transition-transform cursor-pointer
       backdrop-blur-xs hover:backdrop-blur-none flex flex-col justify-between
+      bg-gray-100 shadow-xl
       `}
     >
       <Ticker stock={stock} searchField={searchField} searchTerm={searchTerm} />
@@ -64,11 +73,11 @@ const Stock: React.FC<StockProps> = ({ stock, searchField, searchTerm, onClick }
         <button onClick={handleDetailView}
           className={`
       text-sm font-medium text-blue-600 hover:text-blue-800 cursor-pointer
-      hover:opacity-40 border-1 px-5 py-1 border-white rounded-full
-      hover:scale-[1.06] 
+      hover:opacity-40 border-1 px-5 py-1 rounded-full
+      hover:scale-[1.06] border-transparent
       duration-300 transition-transform
           `}>
-          Detailed View
+          Details
         </button>
         {InvestButton()}
       </div>
