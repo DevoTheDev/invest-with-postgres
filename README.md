@@ -1,24 +1,14 @@
 
-# Next Investment #
+# DevElement #
 
     To get started:
 
-        *   Navigate to the root directory
-            directory and run:
-
-                ~ npm install
-                
-                ~ npm run dev
-
-        *   Then go to localhost:3000 in the browser.
-
-
-        Colors: 
+        *   Have docker-desktop,
+            https://www.docker.com/products/docker-desktop/
         
-        #45fed5
-        #2366e5
-        #c8c7f9
-        #9de2ff
-        #0314a8
-        #646def
-        #f93745
+        *   Clone the repo
+
+        *   ~ docker compose up
+
+        
+    ... at least on my box :)
