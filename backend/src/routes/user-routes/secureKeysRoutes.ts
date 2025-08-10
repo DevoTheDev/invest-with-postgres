@@ -28,6 +28,14 @@ router.get("/polygon-io", authMiddleware, (req, res): Promise<any> =>
     getSecretKey("polygon_io_key", res)
 );
 
+router.get("/news-api-key", authMiddleware, (req, res): Promise<any> =>
+    getSecretKey("news_api_key", res)
+);
+
+router.get("/open-ai-key", authMiddleware, (req, res): Promise<any> =>
+    getSecretKey("open_ai_key", res)
+);
+
 router.get("/jwt-secret", authMiddleware, (req, res): Promise<any> =>
     getSecretKey("jwt_secret", res)
 );
