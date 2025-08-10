@@ -2,7 +2,7 @@ import { AppDataSource } from '../data-source';
 import { Secret } from '../entities/Secret';
 import { logMessage } from './logger';
 
-type SecretKeyName = 'alpha_vantage_key' | 'polygon_io_key' | 'jwt_secret' | 'open_ai_key' | 'news_api_key';
+type SecretKeyName = 'alpha_vantage_key' | 'polygon_io_key' | 'jwt_secret' | 'news_api_key';
 
 const secretCache = new Map<SecretKeyName, string>();
 
