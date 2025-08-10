@@ -1,5 +1,4 @@
 # backend/Dockerfile
-
 FROM node:18-alpine
 
 WORKDIR /app
@@ -9,9 +8,11 @@ RUN npm install
 
 COPY . .
 
-# Optional: run a build step (if using TypeScript or similar)
+# Build TypeScript code
 RUN npm run build
-CMD sh -c "npm run migrate && node dist/scripts/seedSecrets.js && node dist/server.js"
 
+# Expose the port your backend listens on
 EXPOSE 4004
 
+# Run migrations, seed secrets, and start the server
+CMD sh -c "npm run migrate && node dist/scripts/seedSecrets.js && node dist/server.js"
