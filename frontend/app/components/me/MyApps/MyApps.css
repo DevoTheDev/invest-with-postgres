@@ -1,0 +1,89 @@
+/* MyApps.css */
+
+@media (max-width: 340px) {
+    .myapps-mobile {
+        width: 100%;
+    }
+}
+
+/* Container for the whole component */
+.myapps-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    height: 100vh;
+    width: 50%;
+  }
+  
+  /* Wrapper for all app cards */
+  .myapps-card-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem; /* gap-6 in Tailwind */
+    align-items: center;
+  }
+  
+  /* Individual app card */
+  .app-card {
+    border: 2px solid white;
+    border-radius: 0.75rem; /* rounded-xl */
+    display: flex;
+    gap: 1rem; /* gap-4 */
+    padding: 1.5rem; /* p-6 */
+    background: linear-gradient(to bottom left, rgba(0, 0, 0, 0.1), rgba(156, 163, 175, 1), rgba(0, 0, 0, 0.9));
+    transition: all 0.3s ease;
+    transform: scale(1);
+    cursor: pointer;
+    backdrop-filter: blur(8px);
+    width: 100%;
+    align-items: center;
+    justify-content: space-around;
+  }
+  
+  .app-card:hover {
+    background-color: rgba(107, 114, 128, 0.3); /* hover:bg-gray-500/30 */
+    transform: scale(1.02);
+  }
+  
+  /* Left text section in app card */
+  .app-card-text {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    width: 66.6667%; /* w-2/3 */
+  }
+  
+  .app-card-title {
+    font-size: 1.5rem; /* text-2xl */
+    font-weight: 600;
+    color: white;
+    display: flex;
+  }
+  
+  .app-card-description {
+    color: rgba(255, 255, 255, 0.8); /* text-white/80 */
+    font-size: 0.875rem; /* text-sm */
+    display: flex;
+    text-align: left;
+  }
+  
+  /* Right image section in app card */
+  .app-card-image {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: transparent;
+    padding: 1rem;
+    border-radius: 0.75rem;
+  }
+  
+  .app-card-image img {
+    object-fit: contain;
+  }
+  
+  /* Tech display footer */
+  .myapps-footer {
+    display: flex;
+    justify-content: space-evenly;
+  }
+  

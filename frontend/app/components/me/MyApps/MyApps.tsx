@@ -1,8 +1,9 @@
 "use client";
 import { useRouter } from 'next/navigation';
 import React from 'react'
-import TechDisplay from './TechUsed/TechDisplay';
+import TechDisplay from '../TechUsed/TechDisplay';
 import { useAuth } from '@/app/hooks/useAuth';
+import './MyApps.css';
 
 type Props = {}
 
@@ -20,35 +21,24 @@ const AppCard = (app: AppLink): React.ReactNode => {
     if (app.title === "Develement") return null;
 
     return (
-        <div
-            onClick={app.onClick}
-            className={`
-          border-2 border-white rounded-xl 
-          flex gap-4 p-6
-          bg-gradient-to-bl from-black/10 via-gray-400 to-black/90 hover:bg-gray-500/30 
-          transition-all duration-300 transform hover:scale-[1.02]
-          cursor-pointer backdrop-blur-md w-3/4 items-center justify-around
-        `}
-        >
-            <div className="space-y-2 w-2/3">
-                <h1 className="text-2xl font-semibold text-white flex">{app.title}</h1>
-                <p className="text-white/80 text-sm flex text-left">{app.description}</p>
+        <div onClick={app.onClick} className="app-card">
+            <div className="app-card-text">
+                <h1 className="app-card-title">{app.title}</h1>
+                <p className="app-card-description">{app.description}</p>
             </div>
-            <div className=" flex justify-center items-center bg-transparent bg-clip-content p-4 rounded-xl">
+            <div className="app-card-image">
                 {app.img?.url && (
                     <img
                         src={app.img.url}
                         alt={app.img.alt}
                         width={64}
                         height={64}
-                        className="object-contain"
                     />
                 )}
             </div>
         </div>
     );
 };
-
 
 const MyApps = (props: Props) => {
     const router = useRouter();
@@ -69,7 +59,7 @@ const MyApps = (props: Props) => {
                 "Monitor the market and track your investments as you put your money to work for you in this completely free financial companion application.",
             onClick: () => userCheck("/investor"),
             img: {
-                url: "/icons/stocks.svg", // stock market / finance icon
+                url: "/icons/stocks.svg",
                 alt: "InvestorApp",
             },
         },
@@ -79,7 +69,7 @@ const MyApps = (props: Props) => {
                 "Take control of your fitness and track your transformation with an array of tools designed to streamline the achievement of your health and fitness goals.",
             onClick: () => userCheck("/fitness"),
             img: {
-                url: "icons/fitness.svg", // dumbbell / fitness icon
+                url: "icons/fitness.svg",
                 alt: "FitnessApp",
             },
         },
@@ -96,17 +86,17 @@ const MyApps = (props: Props) => {
     ];
 
     return (
-        <div className='flex flex-col justify-evenly h-screen  w-1/2'>
-            <div className="flex flex-col gap-6 items-center" >
+        <div className="myapps-container">
+            <div className="myapps-card-list">
                 {apps.map((a, i) => (
                     <AppCard {...a} key={i} />
                 ))}
             </div>
-            <div className='flex justify-evenly'>
+            <div className="myapps-footer">
                 <TechDisplay github linkedin gmail label={false} size={56} centered />
             </div>
         </div>
     )
 }
 
-export default MyApps
+export default MyApps;
