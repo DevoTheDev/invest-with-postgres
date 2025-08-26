@@ -2,7 +2,7 @@
 import ColoredText from "./components/atoms/ColoredText"
 import BlackSnowBackground from "./components/backgrounds/BlackSnowBackground";
 import SmoothTransition from "./components/sections/SmoothTransition";
-import MyApps from "./components/me/MyApps";
+import MyApps from "./components/me/MyApps/MyApps";
 import HeroCardMobile from "./components/me/HeroCard/HeroCardMobile";
 
 export default function Home() {

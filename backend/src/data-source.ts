@@ -12,24 +12,12 @@ dotenv.config();
 
 export const AppDataSource = new DataSource({
   type: "postgres",
-  host: process.env.DB_HOST || 'develement-app-db.xxxxx.us-east-1.rds.amazonaws.com'
+  host: process.env.DB_HOST || 'develement-app-db.xxxxx.us-east-1.rds.amazonaws.com',
   port: parseInt(process.env.DB_PORT || "5432", 10),
   username: process.env.DB_USER || "devonfennell",
   password: process.env.DB_PASSWORD || "HaHaEmMu20@%",
   database: process.env.DB_NAME || "develement_app",
   synchronize: true,
-  // dropSchema: true,
-  /*
-    Setting 'dropSchema' to true and running the 
-    server will purge the database of all entries 
-    and reset all schema.
-
-      TODO:
-
-      Remove 'dropSchema' from this dataScoure but
-      keeping while in early development.
-
-  */ 
   logging: process.env.NODE_ENV === "development",
   entities: [User, Secret, Profile, Investor, Exerciser, Movement],
   migrations: [],

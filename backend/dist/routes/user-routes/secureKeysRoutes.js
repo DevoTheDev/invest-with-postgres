@@ -34,5 +34,7 @@ const getSecretKey = (key_name, res) => __awaiter(void 0, void 0, void 0, functi
 });
 router.get("/alpha-vantage", authMiddleware_1.authMiddleware, (req, res) => getSecretKey("alpha_vantage_key", res));
 router.get("/polygon-io", authMiddleware_1.authMiddleware, (req, res) => getSecretKey("polygon_io_key", res));
+router.get("/news-api-key", authMiddleware_1.authMiddleware, (req, res) => getSecretKey("news_api_key", res));
+router.get("/open-ai-key", authMiddleware_1.authMiddleware, (req, res) => getSecretKey("open_ai_key", res));
 router.get("/jwt-secret", authMiddleware_1.authMiddleware, (req, res) => getSecretKey("jwt_secret", res));
 exports.default = router;

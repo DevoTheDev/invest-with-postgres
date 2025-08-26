@@ -19,7 +19,7 @@ const investorRoutes_1 = __importDefault(require("./routes/investor-routes/inves
 const exerciserRoutes_1 = __importDefault(require("./routes/exerciser-routes/exerciserRoutes"));
 const requestLogger_1 = require("./middleware/requestLogger");
 require("reflect-metadata");
-// const programsRoutes_1 = __importDefault(require("../src/routes/exerciser-routes/programsRoutes"));
+// import programsRoutes from "../src/routes/exerciser-routes/programsRoutes";
 const investmentsRoutes_1 = __importDefault(require("./routes/investor-routes/investmentsRoutes"));
 const app = (0, express_1.default)();
 const PORT = process.env.PORT || 4004;
@@ -43,7 +43,7 @@ app.use("/api/market", marketRoutes_1.default);
 app.use("/api/alpha-vantage", alphaVantageRoutes_1.default);
 app.use("/api/polygon-io", polygonIoRoutes_1.default);
 app.use("/api/exercisers", exerciserRoutes_1.default);
-// app.use("/api/exercisers/programs", programsRoutes_1.default);
+// app.use("/api/exercisers/programs", programsRoutes);
 // ✅ Global Error Handler (after routes)
 app.use(errorHandler_1.errorHandler);
 // Start Server
