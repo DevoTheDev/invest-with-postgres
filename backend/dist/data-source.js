@@ -52,23 +52,11 @@ exports.AppDataSource = new typeorm_1.DataSource({
     password: process.env.DB_PASSWORD || "HaHaEmMu20@%",
     database: process.env.DB_NAME || "develement_app",
     synchronize: true,
-    // dropSchema: true,
     logging: process.env.NODE_ENV === "development",
     entities: [User_1.User, Secret_1.Secret, Profile_1.Profile, Investor_1.Investor, Exerciser_1.Exerciser, Movement_1.Movement],
     migrations: [],
     subscribers: [],
 });
-/*
-    Setting 'dropSchema' to true and running the
-    server will purge the database of all entries
-    and reset all schema.
-
-      TODO:
-
-      Remove 'dropSchema' from this dataScoure but
-      keeping while in early development.
-
-  */
 /*
 ----------------- NOTE FOR PRODUCTION MODE -------------------
 
