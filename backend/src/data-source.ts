@@ -18,24 +18,11 @@ export const AppDataSource = new DataSource({
   password: process.env.DB_PASSWORD || "HaHaEmMu20@%",
   database: process.env.DB_NAME || "develement_app",
   synchronize: true,
-  // dropSchema: true,
   logging: process.env.NODE_ENV === "development",
   entities: [User, Secret, Profile, Investor, Exerciser, Movement],
   migrations: [],
   subscribers: [],
 });
-
-/*
-    Setting 'dropSchema' to true and running the 
-    server will purge the database of all entries 
-    and reset all schema.
-
-      TODO:
-
-      Remove 'dropSchema' from this dataScoure but
-      keeping while in early development.
-
-  */ 
 
 /* 
 ----------------- NOTE FOR PRODUCTION MODE -------------------
